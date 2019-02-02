@@ -38,8 +38,9 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var multer = require("multer");
-var pool = require("../db");
+// const pool = require("../db");
 var dbHelper = require("../queries");
+var authHelper = require("./auth");
 var router = express_1.Router();
 var UPLOAD_PATH = "../uploads";
 var upload = multer({ dest: UPLOAD_PATH + "/" }); // multer configuration
@@ -115,22 +116,40 @@ router.post("/", upload.single("photo"), function (request, response) { return _
     });
 }); });
 router.post("/login", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, email, password, userLogin;
+    var _a, email, password, isValidEmail, userLogin, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = request.body, email = _a.email, password = _a.password;
+                isValidEmail = function (email) {
+                    return /\S+@\S+\.\S+/.test(email);
+                };
                 //if user info is not passed in return
                 if (!email || !password) {
                     response.status(401).send("please send over username, email and password");
                     return [2 /*return*/];
                 }
-                return [4 /*yield*/, dbHelper.loginUser(email, password)];
+                if (!isValidEmail(email)) {
+                    return [2 /*return*/];
+                }
+                _b.label = 1;
             case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, dbHelper.loginUser(email, password)];
+            case 2:
                 userLogin = _b.sent();
-                console.log("user info ush from router", email, password, userLogin);
-                response.status(201).send("The is signed in " + userLogin);
-                return [2 /*return*/];
+                //  return userLogin;
+                console.log("userlogin11", userLogin);
+                // if(userLogin){
+                //   authHelper
+                // }
+                return [2 /*return*/, response.status(201).send("The is signed in " + userLogin)];
+            case 3:
+                error_1 = _b.sent();
+                return [2 /*return*/, response.status(401).json({
+                        message: "Authentication failed"
+                    })];
+            case 4: return [2 /*return*/];
         }
     });
 }); });

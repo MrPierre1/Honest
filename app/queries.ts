@@ -3,6 +3,7 @@ import { AnyCnameRecord } from "dns";
 const pool = require("./db");
 const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
+const authHelper = require("./controllers/auth");
 
 // const PassedPassword = password => {
 //   console.log("string password", password);
@@ -53,13 +54,6 @@ const createUser = (
       return pool.query(
         "INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning name, email, photo",
         [name, email, hash, photo]
-
-        //   (error: any, results: any) => {
-        //     if (error) {
-        //       throw error;
-        //     }
-        //     return results;
-        //   }
       );
     })
     .then(function(res: any) {
@@ -73,14 +67,16 @@ const createUser = (
 const loginUser = async (email: string, password: string) => {
   const userInfo = await getUserByEmail(email);
   var hashedPassword = userInfo[0].password;
-  bcrypt
-    .compare(password, hashedPassword)
-    .then(function(res: any) {
-      return res;
-    })
-    .catch((error: any) => {
-      throw error;
-    });
+
+  const match = await bcrypt.compare(password, hashedPassword);
+
+  if (match) {
+    console.log("match", match);
+    const token = await authHelper.encode(userInfo[0]);
+    return token;
+  } else {
+    return match;
+  }
 };
 
 const updateUser = (

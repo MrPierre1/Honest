@@ -1,7 +1,9 @@
 import { Router, Request, Response } from "express";
 const multer = require("multer");
-const pool = require("../db");
+// const pool = require("../db");
 const dbHelper = require("../queries");
+const authHelper = require("./auth");
+
 const router: Router = Router();
 
 const UPLOAD_PATH = "../uploads";
@@ -72,16 +74,39 @@ router.post(
 
 router.post("/login", async (request: Request, response: Response) => {
   const { email, password }: UserData = request.body;
+
+  const isValidEmail = (email: string) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
   //if user info is not passed in return
   if (!email || !password) {
     response.status(401).send("please send over username, email and password");
     return;
   }
-  //   console.log("user info ush", email, password);
-  var userLogin = await dbHelper.loginUser(email, password);
-  console.log("user info ush from router", email, password, userLogin);
 
-  response.status(201).send(`The is signed in ${userLogin}`);
+  if (!isValidEmail(email)) {
+    return;
+  }
+
+  try {
+    var userLogin = await dbHelper.loginUser(email, password);
+    //  return userLogin;
+    console.log("userlogin11", userLogin);
+
+    // if(userLogin){
+    //   authHelper
+    // }
+    return response.status(201).send(`The is signed in ${userLogin}`);
+  } catch (error) {
+    return response.status(401).json({
+      message: "Authentication failed"
+    });
+  }
+
+  // console.log("user info ush from router", email, password, userLogin);
+
+  // response.status(201).send(`The is signed in ${userLogin}`);
   //   }
 });
 

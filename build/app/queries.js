@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var pool = require("./db");
 var bcrypt = require("bcrypt");
 var salt = bcrypt.genSaltSync(10);
+var authHelper = require("./controllers/auth");
 // const PassedPassword = password => {
 //   console.log("string password", password);
 //   bcrypt.hash(password, salt, async (err: any, hash: string) => {
@@ -75,14 +76,7 @@ var createUser = function (name, email, password, photo) {
     return bcrypt
         .hash(password, salt)
         .then(function (hash) {
-        return pool.query("INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning name, email, photo", [name, email, hash, photo]
-        //   (error: any, results: any) => {
-        //     if (error) {
-        //       throw error;
-        //     }
-        //     return results;
-        //   }
-        );
+        return pool.query("INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning name, email, photo", [name, email, hash, photo]);
     })
         .then(function (res) {
         return res.rows;
@@ -92,22 +86,23 @@ var createUser = function (name, email, password, photo) {
     });
 };
 var loginUser = function (email, password) { return __awaiter(_this, void 0, void 0, function () {
-    var userInfo, hashedPassword;
+    var userInfo, hashedPassword, match, token;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, getUserByEmail(email)];
             case 1:
                 userInfo = _a.sent();
                 hashedPassword = userInfo[0].password;
-                bcrypt
-                    .compare(password, hashedPassword)
-                    .then(function (res) {
-                    return res;
-                })
-                    .catch(function (error) {
-                    throw error;
-                });
-                return [2 /*return*/];
+                return [4 /*yield*/, bcrypt.compare(password, hashedPassword)];
+            case 2:
+                match = _a.sent();
+                if (!match) return [3 /*break*/, 4];
+                console.log("match", match);
+                return [4 /*yield*/, authHelper.encode(userInfo[0])];
+            case 3:
+                token = _a.sent();
+                return [2 /*return*/, token];
+            case 4: return [2 /*return*/, match];
         }
     });
 }); };
