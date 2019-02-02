@@ -2,7 +2,6 @@ const chai = require("chai");
 const expect = require("chai").expect;
 const chaiHttp = require("chai-http");
 let server = "http://localhost:3001";
-
 chai.use(chaiHttp);
 
 describe("API Routes", function() {
