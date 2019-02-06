@@ -216,6 +216,10 @@ router.delete("/:id/:token", function (request, response) { return __awaiter(_th
             case 0:
                 _a = request.params, id = _a.id, token = _a.token;
                 stringId = parseInt(id);
+                if (!token) {
+                    console.log("no token was specified");
+                    return [2 /*return*/, { message: "No token was specified" }];
+                }
                 return [4 /*yield*/, authHelper.decodeToken(token)];
             case 1:
                 decoded = _b.sent();

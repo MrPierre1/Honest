@@ -1,22 +1,15 @@
 const jwt = require("jwt-simple");
-const secret = "thesecretkey";
-// const pool = require("../db");
-
+// const secret = "thesecretkey";
+const secret = process.env.SECRET;
 const encode = (user: object) => {
   try {
     const token = jwt.encode(user, secret);
-    // console.log("va", token instanceof Promise);
     return token;
   } catch (error) {
     return error;
   }
 };
-const decodeToken = async (token: any) => {
-  //   const token = req.headers["x-access-token"];
-  if (!token) {
-    console.log("no token was specified");
-    return { message: "No token was specified" };
-  }
+const decodeToken = (token: any) => {
   try {
     const decoded = jwt.decode(token, secret);
     return decoded;

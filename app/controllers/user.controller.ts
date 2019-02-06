@@ -160,6 +160,11 @@ router.put("/passwordUpdate", async (request: Request, response: Response) => {
 router.delete("/:id/:token", async (request: Request, response: Response) => {
   const { id, token }: UserData = request.params;
   var stringId = parseInt(id);
+  if (!token) {
+    console.log("no token was specified");
+    return { message: "No token was specified" };
+  }
+
   const decoded = await authHelper.decodeToken(token);
   if (!decoded.id) {
     // return [];

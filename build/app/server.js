@@ -6,14 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var body_parser_1 = __importDefault(require("body-parser"));
 var controllers_1 = require("./controllers");
-// import { taskController } from "./controllers";
-// import { feedbackController } from "./controllers";
-// import { eventController } from "./controllers";
-// const db = require("./queries");
-//
 var app = express_1.default();
-app.use(express_1.default.static('uploads'));
-var port = 3001;
+app.use(express_1.default.static("uploads"));
+var port = process.env.PORT || 3001;
 app.get("/", function (req, res) {
     res.send("I'm in the app");
 });
