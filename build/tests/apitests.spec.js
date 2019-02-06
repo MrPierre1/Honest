@@ -30,4 +30,28 @@ describe("API Routes", function () {
             });
         });
     });
+    describe("Task Routes", function () {
+        it("can get 1 task", function (done) {
+            chai
+                .request(server)
+                .get("/task/1")
+                .end(function (err, res) {
+                expect(res.status).to.equal(200);
+                expect(res.body).to.have.any.keys("task_id");
+                done();
+            });
+        });
+    });
+    describe("Events Routes", function () {
+        it("can get 1 event", function (done) {
+            chai
+                .request(server)
+                .get("/event/3")
+                .end(function (err, res) {
+                expect(res.status).to.equal(200);
+                expect(res.body).to.have.any.keys("event_id");
+                done();
+            });
+        });
+    });
 });

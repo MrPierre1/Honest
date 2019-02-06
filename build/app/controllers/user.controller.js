@@ -38,16 +38,25 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var multer = require("multer");
-// const pool = require("../db");
-var dbHelper = require("../queries");
+var dbHelper = require("./controllerHelpers/userQueries");
 var authHelper = require("./auth");
+var fs = require("fs");
+var helpers = require("./helpers");
 var router = express_1.Router();
-var UPLOAD_PATH = "../uploads";
-var upload = multer({ dest: UPLOAD_PATH + "/" }); // multer configuration
+var UPLOAD_PATH = "uploads/";
+var upload = multer({ dest: "" + UPLOAD_PATH });
+var bcrypt = require("bcrypt");
 router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var allUsers, dbData;
     return __generator(this, function (_a) {
-        res.send("Hello, You're now in the user controller!");
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, dbHelper.getAllUsers()];
+            case 1:
+                allUsers = _a.sent();
+                dbData = Object.assign({}, allUsers[0]);
+                res.send("Hello, You're now in the user controller!\n        Here are all the users: " + Object.entries(dbData) + "\n  \n  ");
+                return [2 /*return*/];
+        }
     });
 }); });
 router.get("/:id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
@@ -66,26 +75,26 @@ router.get("/:id", function (request, response) { return __awaiter(_this, void 0
     });
 }); });
 router.put("/", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, id, name, email, password, photo, oneUserData, dbData;
+    var _a, id, name, email, password, photo, token, oneUserData, dbData;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, id = _a.id, name = _a.name, email = _a.email, password = _a.password, photo = _a.photo;
-                return [4 /*yield*/, dbHelper.updateUser(id, name, email, password, photo)];
+                _a = request.body, id = _a.id, name = _a.name, email = _a.email, password = _a.password, photo = _a.photo, token = _a.token;
+                return [4 /*yield*/, dbHelper.updateUser(id, name, email, password, photo, token)];
             case 1:
                 oneUserData = _b.sent();
                 dbData = Object.assign({}, oneUserData[0]);
-                response.status(200).send("User modified:" + Object.entries(dbData));
+                response.status(200).send("Result from Update: " + Object.entries(dbData));
                 return [2 /*return*/];
         }
     });
 }); });
-router.post("/", upload.single("photo"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name, email, password, photo, oneUserData, dbData, dbEmail, user, addedUserData;
+router.post("/signup", upload.single("file"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var _a, name, email, password, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, photo, user, addedUserData;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password, photo = _a.photo;
+                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
                 //if user info is not passed in return
                 if (!name || !email || !password) {
                     response
@@ -98,25 +107,37 @@ router.post("/", upload.single("photo"), function (request, response) { return _
                 oneUserData = _b.sent();
                 dbData = Object.assign({}, oneUserData[0]);
                 dbEmail = dbData.email;
-                if (!(email === dbEmail)) return [3 /*break*/, 2];
-                response
-                    .status(401)
-                    .send("A user with the email: " + email + " already exist in our system");
-                return [3 /*break*/, 4];
-            case 2: return [4 /*yield*/, dbHelper.createUser(name, email, password, photo)];
-            case 3:
+                if (email === dbEmail) {
+                    response
+                        .status(401)
+                        .send("A user with the email: " + email + " already exist in our system");
+                    return [2 /*return*/];
+                }
+                if (!request.file) {
+                    console.log("No file received");
+                    throw Error;
+                }
+                else {
+                    console.log("file received", request.file);
+                    imagePath = request.file.path;
+                    targetPath = UPLOAD_PATH;
+                    originalImageName = request.file.originalname;
+                    imageUploaded = helpers.imageUpload(imagePath, targetPath, originalImageName, email);
+                }
+                photo = UPLOAD_PATH + email + "/" + request.file.originalname;
+                return [4 /*yield*/, dbHelper.createUser(name, email, password, photo)];
+            case 2:
                 user = _b.sent();
                 addedUserData = Object.assign({}, user[0]);
                 response
                     .status(201)
                     .send("The user was added " + Object.entries(addedUserData));
-                _b.label = 4;
-            case 4: return [2 /*return*/];
+                return [2 /*return*/];
         }
     });
 }); });
 router.post("/login", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, email, password, isValidEmail, userLogin, error_1;
+    var _a, email, password, isValidEmail, userLogin, userLogInData, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -134,37 +155,91 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
                 }
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 3, , 4]);
+                _b.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, dbHelper.loginUser(email, password)];
             case 2:
                 userLogin = _b.sent();
-                //  return userLogin;
-                console.log("userlogin11", userLogin);
-                // if(userLogin){
-                //   authHelper
-                // }
-                return [2 /*return*/, response.status(201).send("The is signed in " + userLogin)];
+                return [4 /*yield*/, dbHelper.getUserByEmail(email)];
             case 3:
+                userLogInData = _b.sent();
+                return [2 /*return*/, response
+                        .status(201)
+                        .send("Here's the user's Data: email: " + userLogInData[0].email + ", token: " + userLogin)];
+            case 4:
                 error_1 = _b.sent();
                 return [2 /*return*/, response.status(401).json({
                         message: "Authentication failed"
                     })];
-            case 4: return [2 /*return*/];
+            case 5: return [2 /*return*/];
         }
     });
 }); });
-router.delete("/:id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var id, deletedResponse;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+router.put("/passwordUpdate", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var _a, token, id, oldPassword, newPassword1, newPassword2, oneUserData, hashedPasswordFromDB, match, updatePasswordResult;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                id = request.params.id;
-                return [4 /*yield*/, dbHelper.deleteUserById(id)];
+                _a = request.body, token = _a.token, id = _a.id, oldPassword = _a.oldPassword, newPassword1 = _a.newPassword1, newPassword2 = _a.newPassword2;
+                if (!token) {
+                    response.status(401).send("please send over a token");
+                    return [2 /*return*/];
+                }
+                if (newPassword1 !== newPassword2) {
+                    response.status(401).send("The passwords must match, please try again");
+                    return [2 /*return*/];
+                }
+                return [4 /*yield*/, dbHelper.getUserById(id)];
             case 1:
-                deletedResponse = _a.sent();
+                oneUserData = _b.sent();
+                hashedPasswordFromDB = oneUserData[0].password;
+                return [4 /*yield*/, bcrypt.compare(oldPassword, hashedPasswordFromDB)];
+            case 2:
+                match = _b.sent();
+                if (!match) return [3 /*break*/, 4];
+                return [4 /*yield*/, dbHelper.passwordUpdate(id, newPassword1)];
+            case 3:
+                updatePasswordResult = _b.sent();
+                response.status(201).send("your password has been updated");
+                return [3 /*break*/, 5];
+            case 4:
+                response.status(401).send("your current password is not valid");
+                _b.label = 5;
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+// need more love
+router.delete("/:id/:token", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var _a, id, token, stringId, decoded, deletedResponse;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = request.params, id = _a.id, token = _a.token;
+                stringId = parseInt(id);
+                return [4 /*yield*/, authHelper.decodeToken(token)];
+            case 1:
+                decoded = _b.sent();
+                if (!!decoded.id) return [3 /*break*/, 2];
+                // return [];
+                response
+                    .status(401)
+                    .send({ message: "A valid token is required for this request" });
+                return [2 /*return*/];
+            case 2:
+                if (!(decoded.id == stringId)) return [3 /*break*/, 4];
+                return [4 /*yield*/, dbHelper.deleteUserById(stringId)];
+            case 3:
+                deletedResponse = _b.sent();
                 console.log("deletedresponse", deletedResponse);
                 response.status(200).send("The user with id " + id + " was deleted ");
+                return [3 /*break*/, 5];
+            case 4:
+                console.log("match is here ", decoded.id == stringId);
+                response
+                    .status(401)
+                    .send({ message: "A valid token is required for this user ID" });
                 return [2 /*return*/];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

@@ -34,6 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var _this = this;
 var jwt = require("jwt-simple");
 var secret = "thesecretkey";
 // const pool = require("../db");
@@ -47,31 +48,24 @@ var encode = function (user) {
         return error;
     }
 };
-var decodeToken = function async(token) {
-    return __awaiter(this, void 0, void 0, function () {
-        var decoded, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    //   const token = req.headers["x-access-token"];
-                    if (!token) {
-                        return [2 /*return*/, res.status(400).send({ message: "Token is not provided" })];
-                    }
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, jwt.decode(token, secret)];
-                case 2:
-                    decoded = _a.sent();
-                    return [2 /*return*/, decoded];
-                case 3:
-                    error_1 = _a.sent();
-                    return [2 /*return*/, error_1];
-                case 4: return [2 /*return*/];
-            }
-        });
+var decodeToken = function (token) { return __awaiter(_this, void 0, void 0, function () {
+    var decoded;
+    return __generator(this, function (_a) {
+        //   const token = req.headers["x-access-token"];
+        if (!token) {
+            console.log("no token was specified");
+            return [2 /*return*/, { message: "No token was specified" }];
+        }
+        try {
+            decoded = jwt.decode(token, secret);
+            return [2 /*return*/, decoded];
+        }
+        catch (error) {
+            return [2 /*return*/, error];
+        }
+        return [2 /*return*/];
     });
-};
+}); };
 module.exports = {
     encode: encode,
     decodeToken: decodeToken
