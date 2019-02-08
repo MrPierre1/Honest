@@ -59,6 +59,7 @@ router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, fu
         }
     });
 }); });
+//@login
 router.get("/:id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
     var id, oneUserData, dbData;
     return __generator(this, function (_a) {
@@ -174,6 +175,7 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
         }
     });
 }); });
+//@login implement login decorator
 router.put("/passwordUpdate", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
     var _a, token, id, oldPassword, newPassword1, newPassword2, oneUserData, hashedPasswordFromDB, match, updatePasswordResult;
     return __generator(this, function (_b) {
@@ -208,6 +210,7 @@ router.put("/passwordUpdate", function (request, response) { return __awaiter(_t
         }
     });
 }); });
+//@login
 // need more love
 router.delete("/:id/:token", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
     var _a, id, token, stringId, decoded, deletedResponse;

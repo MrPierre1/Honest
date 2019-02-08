@@ -28,6 +28,7 @@ router.get("/", async (req: Request, res: Response) => {
   `);
 });
 
+//@login
 router.get("/:id", async (request: Request, response: Response) => {
   const { id }: UserData = request.params;
   const oneUserData = await dbHelper.getUserById(id);
@@ -130,6 +131,7 @@ router.post("/login", async (request: Request, response: Response) => {
   }
 });
 
+//@login implement login decorator
 router.put("/passwordUpdate", async (request: Request, response: Response) => {
   const { token, id, oldPassword, newPassword1, newPassword2 } = request.body;
   if (!token) {
@@ -156,6 +158,7 @@ router.put("/passwordUpdate", async (request: Request, response: Response) => {
   }
 });
 
+//@login
 // need more love
 router.delete("/:id/:token", async (request: Request, response: Response) => {
   const { id, token }: UserData = request.params;

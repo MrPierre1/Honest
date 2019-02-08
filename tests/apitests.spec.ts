@@ -2,6 +2,9 @@ const chai = require("chai");
 const expect = require("chai").expect;
 const chaiHttp = require("chai-http");
 const server = "http://localhost:3001";
+const fakeData = "../app/controllers/helpers.ts";
+const fs = require("fs");
+var faker = require("faker");
 chai.use(chaiHttp);
 
 describe("API Routes", () => {
@@ -24,6 +27,26 @@ describe("API Routes", () => {
           email: "nadia@test.com",
           password: "passwordn"
         })
+        .end((err, res) => {
+          expect(res.status).to.equal(201);
+          done();
+        });
+    });
+    it("can get signup", done => {
+      chai
+        .request(server)
+        .post("/user/signup")
+        .type("form")
+        .field({
+          name: faker.name.findName(),
+          email: faker.internet.email(),
+          password: faker.internet.password()
+        })
+        .attach(
+          "file",
+          fs.readFileSync(__dirname + "/currentjob.png"),
+          "currentjob.png"
+        )
         .end((err, res) => {
           expect(res.status).to.equal(201);
           done();
