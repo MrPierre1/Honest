@@ -1,11 +1,19 @@
 import express from "express";
 import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+import exjwt from "express-jwt";
+const secret = process.env.SECRET;
+
 import {
   userController,
   taskController,
   feedbackController,
   eventController
 } from "./controllers";
+
+const jwtMW = exjwt({
+  secret
+});
 
 const app: express.Application = express();
 app.use(express.static("uploads"));

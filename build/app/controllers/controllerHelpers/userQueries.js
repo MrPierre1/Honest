@@ -35,130 +35,178 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
 var pool = require("./../../db");
 var bcrypt = require("bcrypt");
 var salt = bcrypt.genSaltSync(10);
-var authHelper = require("./../auth");
-var getUserById = function (id) {
-    return pool
-        .query("SELECT * FROM users WHERE id = " + id)
-        .then(function (res) {
-        return res.rows;
-    })
-        .catch(function (err) {
-        return err;
-    });
-};
-var getAllUsers = function (id) {
-    return pool
-        .query("SELECT * FROM users")
-        .then(function (res) {
-        console.log("rest", res);
-        return res.rows;
-    })
-        .catch(function (err) {
-        return err;
-    });
-};
-var getUserByEmail = function (email) {
-    var emailString = email;
-    return pool
-        .query("SELECT * FROM users WHERE email like '%" + emailString + "'")
-        .then(function (res) {
-        return res.rows;
-    })
-        .catch(function (err) {
-        return err;
-    });
-};
-var createUser = function (name, email, password, photo) {
-    return bcrypt
-        .hash(password, salt)
-        .then(function (hash) {
-        return pool.query("INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning name, email, photo", [name, email, hash, photo]);
-    })
-        .then(function (res) {
-        return res.rows;
-    })
-        .catch(function (error) {
-        throw error;
-    });
-};
-var loginUser = function (email, password) { return __awaiter(_this, void 0, void 0, function () {
-    var userInfo, hashedPassword, match, token;
+var jwt = require("jsonwebtoken");
+var secret = process.env.SECRET;
+var getUserById = function (id) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, getUserByEmail(email)];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("SELECT * FROM users WHERE id = " + id)];
+            case 1:
+                res = _a.sent();
+                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+            case 2:
+                error_1 = _a.sent();
+                return [2 /*return*/, error_1];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var getAllUsers = function (id) { return __awaiter(_this, void 0, void 0, function () {
+    var getAll, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("SELECT * FROM users")];
+            case 1:
+                getAll = _a.sent();
+                return [2 /*return*/, getAll.rows.length < 1 ? null : getAll.rows];
+            case 2:
+                error_2 = _a.sent();
+                return [2 /*return*/, error_2];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var getUserByEmail = function (email) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("SELECT * FROM users WHERE email like '%" + email + "'")];
+            case 1:
+                res = _a.sent();
+                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+            case 2:
+                error_3 = _a.sent();
+                return [2 /*return*/, error_3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var createUser = function (name, email, password, photo) { return __awaiter(_this, void 0, void 0, function () {
+    var hashPass, dbInsert, token, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, bcrypt.hash(password, salt)];
+            case 1:
+                hashPass = _a.sent();
+                return [4 /*yield*/, pool.query("INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning name, email, photo", [name, email, hashPass, photo])];
+            case 2:
+                dbInsert = _a.sent();
+                return [4 /*yield*/, jwt.sign({ name: name, email: email, password: password, photo: photo }, secret, {
+                        expiresIn: 129600
+                    })];
+            case 3:
+                token = _a.sent();
+                return [2 /*return*/, token];
+            case 4:
+                error_4 = _a.sent();
+                return [2 /*return*/, error_4];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); };
+var loginUser = function (email, password) { return __awaiter(_this, void 0, void 0, function () {
+    var userInfo, hashedPassword, match, token, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                return [4 /*yield*/, getUserByEmail(email)];
             case 1:
                 userInfo = _a.sent();
-                hashedPassword = userInfo[0].password;
+                hashedPassword = userInfo.password;
                 return [4 /*yield*/, bcrypt.compare(password, hashedPassword)];
             case 2:
                 match = _a.sent();
                 if (!match) return [3 /*break*/, 4];
-                return [4 /*yield*/, authHelper.encode(userInfo[0])];
+                return [4 /*yield*/, jwt.sign({ email: email, password: password }, secret, {
+                        expiresIn: 129600
+                    })];
             case 3:
                 token = _a.sent();
                 return [2 /*return*/, token];
-            case 4: return [2 /*return*/, match];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                error_5 = _a.sent();
+                return [2 /*return*/, error_5];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
-var updateUser = function (id, name, email, password, photo, token) { return __awaiter(_this, void 0, void 0, function () {
-    var decoded;
+var updateUser = function (id, name, email, photo) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                if (!token) {
-                    return [2 /*return*/, [{ message: "A token is required for this request" }]];
-                }
-                console.log("user data11", id, name, email, password, photo);
-                return [4 /*yield*/, authHelper.decodeToken(token)];
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("UPDATE users SET name = $1, email = $2, photo = $3 WHERE id = $4 returning name, email, photo", [name, email, photo, id])];
             case 1:
-                decoded = _a.sent();
-                console.log("decoded is here", decoded.email, email);
-                if (decoded.email != email) {
-                    console.log("the emails do not match");
-                    return [2 /*return*/, [{ message: "you cannot update someone else account" }]];
-                }
-                return [2 /*return*/, pool
-                        .query("UPDATE users SET name = $1, email = $2, password = $3, photo = $4 WHERE id = $5 returning name, email, photo", [name, email, password, photo, id])
-                        .then(function (res) {
-                        return res.rows;
-                    })
-                        .catch(function (err) {
-                        return err;
-                    })];
+                res = _a.sent();
+                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+            case 2:
+                error_6 = _a.sent();
+                return [2 /*return*/, error_6];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var passwordUpdate = function (id, newPassword1) { return __awaiter(_this, void 0, void 0, function () {
+    var passReset;
     return __generator(this, function (_a) {
-        return [2 /*return*/, bcrypt
-                .hash(newPassword1, salt)
-                .then(function (password) {
-                return pool.query("UPDATE users SET password = $1 WHERE id = $2 returning id, name, email", [password, id]);
-            })
-                .then(function (res) {
-                return res.rows;
-            })
-                .catch(function (error) {
-                throw error;
-            })];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, bcrypt.hash(newPassword1, salt)];
+            case 1:
+                passReset = _a.sent();
+                return [2 /*return*/, passReset];
+        }
     });
 }); };
 var deleteUserById = function (id) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_7;
     return __generator(this, function (_a) {
-        return [2 /*return*/, pool
-                .query("DELETE FROM users WHERE id = " + id)
-                .then(function (res) {
-                console.log("delete by id,", res.rows);
-                return res;
-            })
-                .catch(function (err) {
-                console.log("error/", err);
-                return err;
-            })];
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("DELETE FROM users WHERE id = " + id)];
+            case 1:
+                res = _a.sent();
+                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+            case 2:
+                error_7 = _a.sent();
+                return [2 /*return*/, error_7];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var deleteUserByEmail = function (email) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_8;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("DELETE FROM users WHERE email like '%" + email + "'")];
+            case 1:
+                res = _a.sent();
+                console.log("iser is deleted", res);
+                return [2 /*return*/, res.rowCount < 1 ? "user not deleted" : "user deleted"];
+            case 2:
+                error_8 = _a.sent();
+                console.log("err", error_8);
+                return [2 /*return*/, error_8];
+            case 3: return [2 /*return*/];
+        }
     });
 }); };
 module.exports = {
@@ -169,5 +217,6 @@ module.exports = {
     createUser: createUser,
     updateUser: updateUser,
     deleteUserById: deleteUserById,
+    deleteUserByEmail: deleteUserByEmail,
     passwordUpdate: passwordUpdate
 };
