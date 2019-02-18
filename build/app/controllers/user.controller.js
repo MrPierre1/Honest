@@ -126,6 +126,7 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
         switch (_b.label) {
             case 0:
                 _a = request.body, name = _a.name, email = _a.email, password = _a.password;
+                //checkValues() write function
                 //if user info is not passed in return
                 if (!name || !email || !password) {
                     response
@@ -144,8 +145,6 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                         .send("A user with the email: " + email + " already exist in our system");
                     return [2 /*return*/];
                 }
-                // load filename with guid in db, save guid in database
-                //reference upload folder with guid
                 if (!request.file) {
                     console.log("No file received");
                     throw Error;

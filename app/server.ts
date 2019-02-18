@@ -18,7 +18,7 @@ const jwtMW = exjwt({
 const app: express.Application = express();
 app.use(express.static("uploads"));
 
-const port: number = process.env.PORT || 3001;
+const port: number = process.env.PORT || 3000;
 
 app.get("/", (req, res) => {
   res.send(`I'm in the app`);

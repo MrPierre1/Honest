@@ -13,7 +13,7 @@ var jwtMW = express_jwt_1.default({
 });
 var app = express_1.default();
 app.use(express_1.default.static("uploads"));
-var port = process.env.PORT || 3001;
+var port = process.env.PORT || 3000;
 app.get("/", function (req, res) {
     res.send("I'm in the app");
 });

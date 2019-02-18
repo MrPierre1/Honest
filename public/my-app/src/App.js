@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
+import Header from "./components/header/header";
+import UserList from "./components/users/userlist";
 
 class App extends Component {
   constructor(props) {
@@ -9,82 +11,78 @@ class App extends Component {
       currentState: "not-panic",
       userData: [],
       userPhoto: [],
+      data: [],
     };
   }
+  // componentDidMount () {
+  async componentDidMount() {
+    try {
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/users/`
+      );
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      var json = await response.json();
+      this.setState({ data: json });
 
-  componentDidMount = () => {
-    fetch("https://jsonplaceholder.typicode.com/users/")
-      .then(response => response.json())
-      .then(json => {
-        this.setState({ userData: json });
+      console.log("this.data", json[0], json[0].id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-        fetch("https://jsonplaceholder.typicode.com/todos/")
-          .then(response => response.json())
-          .then(json2 => {
-            this.setState({ userPhoto: json2 });
-            console.log("data todos", this.state.userPhoto);
-            // fetch("https://jsonplaceholder.typicode.com/users/")
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  // fetch("https://jsonplaceholder.typicode.com/users/")
+  //       .then(response => response.json())
+  //       .then(json => {
+  //         this.setState({ userData: json })
+
+  //         fetch("https://jsonplaceholder.typicode.com/todos/")
+  //           .then(response => response.json())
+  //           .then(json2 => {
+  //             this.setState({ userPhoto: json2 })
+  //             console.log("data todos", this.state.userPhoto)
+  //             // fetch("https://jsonplaceholder.typicode.com/users/")
+  //           })
+  //           .catch(err => {
+  //             console.log(err)
+  //           })
+  //       })
+  //       .catch(err => {
+  //         console.log(err)
+  //       })
+  //   }
+  // }
 
   render() {
-    const loadUser = () => {
-      console.log("user was clicked");
-    };
-
-    console.log(this.state.currentState, "loge", this.state.userData);
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1> Header</h1>
-        </header>
+      <div>
+        <Header />
         <div className="parent">
           <div className="left">
-            <ul>
-              {this.state.userData.map(function(user) {
-                return (
-                  <div className="left">
-                    <ul>
-                      <li key={user.id} style={{ listStyleType: "none" }}>
-                        <a
-                          onClick={loadUser}
-                          style={{ color: "white", textDecoration: "none" }}
-                          href="#"
-                        >
-                          {user.name}
-                        </a>
-                        <hr />
-                      </li>
-                    </ul>
-                  </div>
-                );
-              })}
-            </ul>
+            {this.state.data.map(user => {
+              return (
+                <UserList
+                  key={user.id}
+                  userPhone={user.phone}
+                  userName={user.name}
+                  userEmail={user.email}
+                />
+              );
+            })}
           </div>
-          <div className="right">
-            <ul>
-              {this.state.userPhoto.map(function(photo) {
-                return (
-                  <li key={photo.id} style={{ listStyleType: "none" }}>
-                    <a
-                      style={{ color: "white", textDecoration: "none" }}
-                      href="#"
-                    >
-                      {photo.title}
-                    </a>
 
-                    <hr />
-                  </li>
-                );
-              })}
-            </ul>
+          <div className="right">
+            {this.state.data.map(user => {
+              return (
+                <UserList
+                  key={user.id}
+                  userId={user.id}
+                  userName={user.name}
+                  userEmail={user.email}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

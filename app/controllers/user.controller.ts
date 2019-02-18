@@ -77,6 +77,8 @@ router.post(
   async (request: UserDataRequest, response: Response) => {
     const { name, email, password } = request.body;
 
+    //checkValues() write function
+
     //if user info is not passed in return
     if (!name || !email || !password) {
       response
@@ -95,8 +97,6 @@ router.post(
       return;
     }
 
-    // load filename with guid in db, save guid in database
-    //reference upload folder with guid
     if (!request.file) {
       console.log("No file received");
       throw Error;
