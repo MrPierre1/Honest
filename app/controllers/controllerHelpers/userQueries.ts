@@ -1,20 +1,30 @@
 const pool = require("./../../db");
 const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
-import { UserData } from "../user.controller";
+// import { UserData } from '../user.controller';
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
+import { UserData } from "./../interfaces";
 
-const getUserById = async (id: number) => {
+const results = (queryResult: any) => {
+  return queryResult.rows.length < 1
+    ? "Your query did not produce any valid results"
+    : queryResult.rows[0];
+};
+
+const getUserById = async (user_id: number): Promise<UserData> => {
   try {
-    const res = await pool.query(`SELECT * FROM users WHERE id = ${id}`);
-    return res.rows.length < 1 ? null : res.rows[0];
+    const res = await pool.query(
+      `SELECT * FROM users WHERE user_id = ${user_id}`
+    );
+    console.log("res", res);
+    return results(res);
   } catch (error) {
     return error;
   }
 };
 
-const getAllUsers = async (id: number) => {
+const getAllUsers = async () => {
   try {
     const getAll = await pool.query(`SELECT * FROM users`);
     return getAll.rows.length < 1 ? null : getAll.rows;
@@ -28,7 +38,7 @@ const getUserByEmail = async (email: string): Promise<UserData | null> => {
     const res = await pool.query(
       `SELECT * FROM users WHERE email like '%${email}'`
     );
-    return res.rows.length < 1 ? null : res.rows[0];
+    return results(res);
   } catch (error) {
     return error;
   }
@@ -74,31 +84,33 @@ const loginUser = async (email: string, password: string) => {
 };
 
 const updateUser = async (
-  id: string,
+  user_id: string,
   name: string,
   email: string,
   photo: string
 ) => {
   try {
     const res = await pool.query(
-      "UPDATE users SET name = $1, email = $2, photo = $3 WHERE id = $4 returning name, email, photo",
-      [name, email, photo, id]
+      "UPDATE users SET name = $1, email = $2, photo = $3 WHERE user_id = $4 returning name, email, photo",
+      [name, email, photo, user_id]
     );
-    return res.rows.length < 1 ? null : res.rows[0];
+    return results(res);
   } catch (error) {
     return error;
   }
 };
 
-const passwordUpdate = async (id: number, newPassword1: string) => {
+const passwordUpdate = async (user_id: number, newPassword1: string) => {
   const passReset = await bcrypt.hash(newPassword1, salt);
   return passReset;
 };
 
-const deleteUserById = async (id: number) => {
+const deleteUserById = async (user_id: number) => {
   try {
-    const res = await pool.query(`DELETE FROM users WHERE id = ${id}`);
-    return res.rows.length < 1 ? null : res.rows[0];
+    const res = await pool.query(
+      `DELETE FROM users WHERE user_id = ${user_id}`
+    );
+    return results(res);
   } catch (error) {
     return error;
   }
@@ -117,7 +129,7 @@ const deleteUserByEmail = async (email: string) => {
   }
 };
 
-module.exports = {
+export default {
   getUserById,
   getAllUsers,
   getUserByEmail,

@@ -2,7 +2,8 @@
 /* eslint-disable no-unused-expressions */
 import React from 'react'
 import User from './user'
-function UserList (props) {
+import UserData from '../users/userData'
+function UserDetails (props) {
   return (
     <div>
       <div>
@@ -11,11 +12,8 @@ function UserList (props) {
             <div className=''>
               <ul>
                 <li style={{ listStyleType: 'none' }}>
-                  <User
-                    userPhone={props.userPhone}
-                    userName={props.userName}
-                    userEmail={props.userEmail}
-                    userId={props.userId}></User>
+                  <UserData userId={props.userId} body={props.body} title={props.title}>
+                  </UserData>
                   <hr />
                 </li>
               </ul>
@@ -27,4 +25,4 @@ function UserList (props) {
   )
 }
 
-export default UserList
+export default UserDetails

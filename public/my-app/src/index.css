@@ -59,7 +59,7 @@ code {
   min-width: 400px;
   flex-grow: 1000;
   display: inline-block;
-  background-color: green;
+  /* background-color: green; */
 }
 .left {
   height: 100%;

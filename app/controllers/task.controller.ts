@@ -3,15 +3,10 @@ const dbHelper = require("./controllerHelpers/taskQueries");
 const router: Router = Router();
 
 interface TaskData {
-  email: string;
   task_id: number;
-  type: string;
-  taskTitle: string;
+  task_title: string;
   task: string;
-  assignedTo: number;
-  createdBy: number;
-  due_date: number;
-  due_time: number;
+  date: number;
 }
 
 router.get("/", async (req: Request, res: Response) => {
@@ -19,65 +14,35 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.get("/:task_id", async (request: Request, response: Response) => {
-  const { task_id }: taskData = request.params;
-  const onetaskData = await dbHelper.getTaskByID(task_id);
-  const dbData = Object.assign({}, onetaskData[0]);
-  response.status(200).send(dbData);
+  const { task_id } = request.params;
+  const onetaskData = await dbHelper.getTaskById(task_id);
+  response.status(200).send(onetaskData);
 });
 
-router.post("/create", async (request: Request, response: Response) => {
-  const {
-    type,
-    taskTitle,
-    task,
-    assignedTo,
-    createdBy,
-    due_date,
-    due_time
-  }: TaskData = request.body;
-  // console.log("taskdata", request.body);
+router.post("/", async (request: Request, response: Response) => {
+  const { task_title, task, date } = request.body;
+  console.log("task data, ", task_title, task, date);
+  const createdTask = await dbHelper.createTask(task_title, task, date);
+  response.status(201).send(createdTask);
+});
 
-  if (!type || !taskTitle || !task || !assignedTo) {
-    response.status(401)
-      .send(`please send over an object with these properties {
-        type,
-        taskTitle,
-        task,
-        assignedTo
-      } `);
-    return;
-  }
-
-  // console.log("data for tasks", request.body);
-  const createdTask = await dbHelper.createTask(
-    type,
-    taskTitle,
+router.put("/", async (request: Request, response: Response) => {
+  const { task_id, task_title, task, date } = request.body;
+  const onetaskData = await dbHelper.updateTask(
+    task_id,
+    task_title,
     task,
-    assignedTo,
-    createdBy,
-    due_date,
-    due_time
+    date
   );
-  console.log("createdTAsk", createdTask);
-  const addedUserData = Object.assign({}, createdTask[0]);
-  response
-    .status(201)
-    .send(`The task was added ${Object.entries(addedUserData)}`);
-});
-
-router.put("/update", async (request: Request, response: Response) => {
-  const { task_id, taskTitle }: TaskData = request.body;
-  const onetaskData = await dbHelper.updateTask(task_id, taskTitle);
-  const dbData = Object.assign({}, onetaskData[0]);
-  response.status(200).send(`task modified:${Object.entries(dbData)}`);
+  response.status(200).json(onetaskData);
 });
 
 router.delete("/:task_id", async (request: Request, response: Response) => {
-  const { task_id }: taskData = request.params;
+  const { task_id } = request.params;
   console.log("id of task", task_id);
   const deletedResponse = await dbHelper.deleteTaskById(task_id);
   // console.log("deletedresponse", deletedResponse);
-  response.status(200).send(`The task with id ${task_id} was deleted `);
+  response.status(200).send(deletedResponse);
 });
 
 export const taskController: Router = router;

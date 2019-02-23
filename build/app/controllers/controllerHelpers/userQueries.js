@@ -39,18 +39,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var pool = require("./../../db");
 var bcrypt = require("bcrypt");
 var salt = bcrypt.genSaltSync(10);
+// import { UserData } from '../user.controller';
 var jwt = require("jsonwebtoken");
 var secret = process.env.SECRET;
-var getUserById = function (id) { return __awaiter(_this, void 0, void 0, function () {
+var results = function (queryResult) {
+    return queryResult.rows.length < 1
+        ? "Your query did not produce any valid results"
+        : queryResult.rows[0];
+};
+var getUserById = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
     var res, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("SELECT * FROM users WHERE id = " + id)];
+                return [4 /*yield*/, pool.query("SELECT * FROM users WHERE user_id = " + user_id)];
             case 1:
                 res = _a.sent();
-                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+                console.log("res", res);
+                return [2 /*return*/, results(res)];
             case 2:
                 error_1 = _a.sent();
                 return [2 /*return*/, error_1];
@@ -58,7 +65,7 @@ var getUserById = function (id) { return __awaiter(_this, void 0, void 0, functi
         }
     });
 }); };
-var getAllUsers = function (id) { return __awaiter(_this, void 0, void 0, function () {
+var getAllUsers = function () { return __awaiter(_this, void 0, void 0, function () {
     var getAll, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -84,7 +91,7 @@ var getUserByEmail = function (email) { return __awaiter(_this, void 0, void 0, 
                 return [4 /*yield*/, pool.query("SELECT * FROM users WHERE email like '%" + email + "'")];
             case 1:
                 res = _a.sent();
-                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+                return [2 /*return*/, results(res)];
             case 2:
                 error_3 = _a.sent();
                 return [2 /*return*/, error_3];
@@ -145,16 +152,16 @@ var loginUser = function (email, password) { return __awaiter(_this, void 0, voi
         }
     });
 }); };
-var updateUser = function (id, name, email, photo) { return __awaiter(_this, void 0, void 0, function () {
+var updateUser = function (user_id, name, email, photo) { return __awaiter(_this, void 0, void 0, function () {
     var res, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("UPDATE users SET name = $1, email = $2, photo = $3 WHERE id = $4 returning name, email, photo", [name, email, photo, id])];
+                return [4 /*yield*/, pool.query("UPDATE users SET name = $1, email = $2, photo = $3 WHERE user_id = $4 returning name, email, photo", [name, email, photo, user_id])];
             case 1:
                 res = _a.sent();
-                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+                return [2 /*return*/, results(res)];
             case 2:
                 error_6 = _a.sent();
                 return [2 /*return*/, error_6];
@@ -162,7 +169,7 @@ var updateUser = function (id, name, email, photo) { return __awaiter(_this, voi
         }
     });
 }); };
-var passwordUpdate = function (id, newPassword1) { return __awaiter(_this, void 0, void 0, function () {
+var passwordUpdate = function (user_id, newPassword1) { return __awaiter(_this, void 0, void 0, function () {
     var passReset;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -173,16 +180,16 @@ var passwordUpdate = function (id, newPassword1) { return __awaiter(_this, void 
         }
     });
 }); };
-var deleteUserById = function (id) { return __awaiter(_this, void 0, void 0, function () {
+var deleteUserById = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
     var res, error_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("DELETE FROM users WHERE id = " + id)];
+                return [4 /*yield*/, pool.query("DELETE FROM users WHERE user_id = " + user_id)];
             case 1:
                 res = _a.sent();
-                return [2 /*return*/, res.rows.length < 1 ? null : res.rows[0]];
+                return [2 /*return*/, results(res)];
             case 2:
                 error_7 = _a.sent();
                 return [2 /*return*/, error_7];
@@ -209,7 +216,7 @@ var deleteUserByEmail = function (email) { return __awaiter(_this, void 0, void 
         }
     });
 }); };
-module.exports = {
+exports.default = {
     getUserById: getUserById,
     getAllUsers: getAllUsers,
     getUserByEmail: getUserByEmail,

@@ -118,7 +118,7 @@ CREATE TABLE public.events
 );
 
 
-CREATE TABLE public.participants
+CREATE TABLE public.user_task
 (
     user_id integer NOT NULL,
     event_id integer NOT NULL,

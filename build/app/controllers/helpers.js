@@ -23,6 +23,13 @@ var imageUpload = function (imagePath, targetPath, originalFileName, email) {
     //     return { message: "image failed ot upload", error: err };
     //   });
 };
+var checkValues = function (value1, value2, value3) {
+    if (!value1 || !value2 || !value3) {
+        return false;
+    }
+    return true;
+};
 module.exports = {
-    imageUpload: imageUpload
+    imageUpload: imageUpload,
+    checkValues: checkValues
 };

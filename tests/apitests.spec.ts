@@ -12,7 +12,7 @@ describe("API Routes", () => {
     it("can get 1 user", done => {
       chai
         .request(server)
-        .get("/user/10")
+        .get("/user/92")
         .end((err, res) => {
           expect(res.status).to.equal(200);
           // expect(res.body).to.have.any.keys("id");
@@ -65,7 +65,19 @@ describe("API Routes", () => {
         });
     });
   });
-  describe("Events Routes", () => {
+
+  describe("User Task Routes", () => {
+    it("can get all tasks for one user", done => {
+      chai
+        .request(server)
+        .get("/usertask/user/92")
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done();
+        });
+    });
+  });
+  xdescribe("Events Routes", () => {
     it("can get 1 event", done => {
       chai
         .request(server)

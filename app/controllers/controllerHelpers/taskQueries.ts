@@ -1,75 +1,71 @@
 const pool = require("./../../db");
 
-const getTaskByID = (task_id: number) => {
-  return pool
-    .query(`SELECT * FROM tasks WHERE task_id = ${task_id}`)
-    .then((res: any) => {
-      return res.rows;
-    })
-    .catch((err: any) => {
-      return err;
-    });
+const results = (queryResult: any) => {
+  return queryResult.rows.length < 1
+    ? "Your query did not produce any valid results"
+    : queryResult.rows[0];
 };
 
-const createTask = (
-  type: string,
-  taskTitle: string,
-  task: string,
-  assignedTo: number,
-  createdBy: number,
-  due_date: number,
-  due_time: number
-) => {
-  return pool
-    .query(
-      "INSERT INTO tasks (type, taskTitle, task, assignedTo, createdBy, due_date, due_time) VALUES ($1, $2, $3, $4, $5, $6, $7) returning type, taskTitle, task",
-      [type, taskTitle, task, assignedTo, createdBy, due_date, due_time]
-    )
-    .then((res: any) => {
-      return res.rows;
-    })
-    .catch((error: any) => {
-      throw error;
-    });
+const getTaskById = async (task_id: number) => {
+  try {
+    const res = await pool.query(
+      `SELECT * FROM tasks WHERE task_id = ${task_id}`
+    );
+    console.log("res", res);
+    return results(res);
+  } catch (error) {
+    return error;
+  }
 };
 
-const updateTask = (
+const createTask = async (task_title: string, task: string, date: number) => {
+  try {
+    const res = await pool.query(
+      "INSERT INTO tasks (task_title, task, date) VALUES ($1, $2, $3) returning task_id  task_title, task",
+      [task_title, task, date]
+    );
+
+    return results(res);
+  } catch (error) {
+    return error;
+  }
+};
+
+const updateTask = async (
   task_id: number,
-  type: string,
-  taskTitle: string,
+  task_title: string,
   task: string,
-  assignedTo: number
+  date: number
 ) => {
-  console.log("task data11", task_id, taskTitle);
-  return pool
-    .query(
-      "UPDATE tasks SET type = $1, taskTitle = $2, task = $3, assignedTo = $4, modified_date = NOW() WHERE task_id = $5 returning taskTitle, task_id",
-      [type, taskTitle, task, assignedTo, task_id]
-    )
-    .then((res: any) => {
-      return res.rows;
-    })
-    .catch((err: any) => {
-      return err;
-    });
+  console.log("task data11", task_id, task_title);
+  const d = new Date();
+  try {
+    const res = await pool.query(
+      "UPDATE tasks SET task_title = $1, task = $2, date = $3, modified_date = NOW() WHERE task_id = $4 returning task_title, task_id",
+      [task_title, task, d.toLocaleString(), task_id]
+    );
+    return results(res);
+  } catch (error) {
+    console.log("there are errors", error);
+    return error;
+  }
 };
 
-const deleteTaskById = (task_id: number) => {
-  console.log("id is here from queries", task_id);
-  return pool
-    .query(`DELETE FROM tasks WHERE task_id = ${task_id}`)
-    .then((res: any) => {
-      console.log("delete by id,", res.rows);
-      return res;
-    })
-    .catch((err: any) => {
-      console.log("error/", err);
-      return err;
-    });
+const deleteTaskById = async (task_id: number) => {
+  console.log("task data11", task_id);
+  try {
+    console.log("inside the try");
+    const res = await pool.query(`DELETE FROM tasks WHERE task_id =${task_id}`);
+    console.log("done createing res", res);
+    return results(res);
+  } catch (error) {
+    console.log("found the error its, here", error);
+    return console.log("error for the delete", error);
+  }
 };
 
 module.exports = {
-  getTaskByID,
+  getTaskById,
   createTask,
   updateTask,
   deleteTaskById

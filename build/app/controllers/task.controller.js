@@ -46,55 +46,44 @@ router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, fu
     });
 }); });
 router.get("/:task_id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var task_id, onetaskData, dbData;
+    var task_id, onetaskData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 task_id = request.params.task_id;
-                return [4 /*yield*/, dbHelper.getTaskByID(task_id)];
+                return [4 /*yield*/, dbHelper.getTaskById(task_id)];
             case 1:
                 onetaskData = _a.sent();
-                dbData = Object.assign({}, onetaskData[0]);
-                response.status(200).send(dbData);
+                response.status(200).send(onetaskData);
                 return [2 /*return*/];
         }
     });
 }); });
-router.post("/create", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, type, taskTitle, task, assignedTo, createdBy, due_date, due_time, createdTask, addedUserData;
+router.post("/", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var _a, task_title, task, date, createdTask;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, type = _a.type, taskTitle = _a.taskTitle, task = _a.task, assignedTo = _a.assignedTo, createdBy = _a.createdBy, due_date = _a.due_date, due_time = _a.due_time;
-                // console.log("taskdata", request.body);
-                if (!type || !taskTitle || !task || !assignedTo) {
-                    response.status(401)
-                        .send("please send over an object with these properties {\n        type,\n        taskTitle,\n        task,\n        assignedTo\n      } ");
-                    return [2 /*return*/];
-                }
-                return [4 /*yield*/, dbHelper.createTask(type, taskTitle, task, assignedTo, createdBy, due_date, due_time)];
+                _a = request.body, task_title = _a.task_title, task = _a.task, date = _a.date;
+                console.log("task data, ", task_title, task, date);
+                return [4 /*yield*/, dbHelper.createTask(task_title, task, date)];
             case 1:
                 createdTask = _b.sent();
-                console.log("createdTAsk", createdTask);
-                addedUserData = Object.assign({}, createdTask[0]);
-                response
-                    .status(201)
-                    .send("The task was added " + Object.entries(addedUserData));
+                response.status(201).send(createdTask);
                 return [2 /*return*/];
         }
     });
 }); });
-router.put("/update", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, task_id, taskTitle, onetaskData, dbData;
+router.put("/", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var _a, task_id, task_title, task, date, onetaskData;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, task_id = _a.task_id, taskTitle = _a.taskTitle;
-                return [4 /*yield*/, dbHelper.updateTask(task_id, taskTitle)];
+                _a = request.body, task_id = _a.task_id, task_title = _a.task_title, task = _a.task, date = _a.date;
+                return [4 /*yield*/, dbHelper.updateTask(task_id, task_title, task, date)];
             case 1:
                 onetaskData = _b.sent();
-                dbData = Object.assign({}, onetaskData[0]);
-                response.status(200).send("task modified:" + Object.entries(dbData));
+                response.status(200).json(onetaskData);
                 return [2 /*return*/];
         }
     });
@@ -110,7 +99,7 @@ router.delete("/:task_id", function (request, response) { return __awaiter(_this
             case 1:
                 deletedResponse = _a.sent();
                 // console.log("deletedresponse", deletedResponse);
-                response.status(200).send("The task with id " + task_id + " was deleted ");
+                response.status(200).send(deletedResponse);
                 return [2 /*return*/];
         }
     });

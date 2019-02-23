@@ -41,13 +41,13 @@ var results = function (queryResult) {
         ? "Your query did not produce any valid results"
         : queryResult.rows[0];
 };
-var getTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, function () {
+var getUserTaskByTaskId = function (task_id) { return __awaiter(_this, void 0, void 0, function () {
     var res, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("SELECT * FROM tasks WHERE task_id = " + task_id)];
+                return [4 /*yield*/, pool.query("SELECT * FROM user_task WHERE task_id = " + task_id)];
             case 1:
                 res = _a.sent();
                 console.log("res", res);
@@ -59,15 +59,16 @@ var getTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, f
         }
     });
 }); };
-var createTask = function (task_title, task, date) { return __awaiter(_this, void 0, void 0, function () {
+var getUserTaskByUserId = function (user_id) { return __awaiter(_this, void 0, void 0, function () {
     var res, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("INSERT INTO tasks (task_title, task, date) VALUES ($1, $2, $3) returning task_id  task_title, task", [task_title, task, date])];
+                return [4 /*yield*/, pool.query("SELECT * FROM user_task WHERE user_id = " + user_id)];
             case 1:
                 res = _a.sent();
+                console.log("res", res);
                 return [2 /*return*/, results(res)];
             case 2:
                 error_2 = _a.sent();
@@ -76,54 +77,59 @@ var createTask = function (task_title, task, date) { return __awaiter(_this, voi
         }
     });
 }); };
-var updateTask = function (task_id, task_title, task, date) { return __awaiter(_this, void 0, void 0, function () {
-    var d, res, error_3;
+var associateUserWithTask = function (task_id, user_id) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log("task data11", task_id, task_title);
-                d = new Date();
-                _a.label = 1;
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("INSERT INTO user_task (task_id, user_id) VALUES ($1, $2) returning task_id", [task_id, user_id])];
             case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, pool.query("UPDATE tasks SET task_title = $1, task = $2, date = $3, modified_date = NOW() WHERE task_id = $4 returning task_title, task_id", [task_title, task, d.toLocaleString(), task_id])];
-            case 2:
                 res = _a.sent();
                 return [2 /*return*/, results(res)];
-            case 3:
+            case 2:
                 error_3 = _a.sent();
-                console.log("there are errors", error_3);
                 return [2 /*return*/, error_3];
-            case 4: return [2 /*return*/];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-var deleteTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, function () {
-    var res, error_4;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log("task data11", task_id);
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                console.log("inside the try");
-                return [4 /*yield*/, pool.query("DELETE FROM tasks WHERE task_id =" + task_id)];
-            case 2:
-                res = _a.sent();
-                console.log("done createing res", res);
-                return [2 /*return*/, results(res)];
-            case 3:
-                error_4 = _a.sent();
-                console.log("found the error its, here", error_4);
-                return [2 /*return*/, console.log("error for the delete", error_4)];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
+// const updateTask = async (
+//   task_id: number,
+//   task_title: string,
+//   task: string,
+//   date: number
+// ) => {
+//   console.log("task data11", task_id, task_title);
+//   const d = new Date();
+//   try {
+//     const res = await pool.query(
+//       "UPDATE tasks SET task_title = $1, task = $2, date = $3, modified_date = NOW() WHERE task_id = $4 returning task_title, task_id",
+//       [task_title, task, d.toLocaleString(), task_id]
+//     );
+//     return results(res);
+//   } catch (error) {
+//     console.log("there are errors", error);
+//     return error;
+//   }
+// };
+// const deleteTaskById = async (task_id: number) => {
+//   console.log("task data11", task_id);
+//   try {
+//     console.log("inside the try");
+//     const res = await pool.query(`DELETE FROM tasks WHERE task_id =${task_id}`);
+//     console.log("done createing res", res);
+//     return results(res);
+//   } catch (error) {
+//     console.log("found the error its, here", error);
+//     return console.log("error for the delete", error);
+//   }
+// };
 module.exports = {
-    getTaskById: getTaskById,
-    createTask: createTask,
-    updateTask: updateTask,
-    deleteTaskById: deleteTaskById
+    getUserTaskByTaskId: getUserTaskByTaskId,
+    getUserTaskByUserId: getUserTaskByUserId,
+    associateUserWithTask: associateUserWithTask
+    // createTask,
+    // updateTask,
+    // deleteTaskById
 };

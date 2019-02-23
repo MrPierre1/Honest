@@ -34,11 +34,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var multer = require("multer");
-var dbHelper = require("./controllerHelpers/userQueries");
+// const dbHelper = require("./controllerHelpers/userQueries");
+var userQueries_1 = __importDefault(require("./controllerHelpers/userQueries"));
 var authHelper = require("./auth");
 var fs = require("fs");
 var helpers = require("./helpers");
@@ -49,105 +53,85 @@ var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 var exjwt = require("express-jwt");
 var secret = process.env.SECRET || "thesecretkey";
-var interfaces = require("./interfaces");
 var jwtMW = exjwt({
     secret: secret
 });
 router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var allUsers, dbData, error_1;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, dbHelper.getAllUsers()];
-            case 1:
-                allUsers = _a.sent();
-                dbData = Object.assign({}, allUsers);
-                res.send(" Hello, You're now in the user controller! " + Object.entries(dbData) + "  \n  ");
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                res.status(200).send(error_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
+        res.status(201).send("re now in the user controller!");
+        return [2 /*return*/];
     });
 }); });
 //@login
 router.get("/:id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var id, oneUserData, dbData, error_2;
+    var id, oneUserData, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 id = request.params.id;
-                return [4 /*yield*/, dbHelper.getUserById(id)];
+                return [4 /*yield*/, userQueries_1.default.getUserById(id)];
             case 1:
                 oneUserData = _a.sent();
-                dbData = Object.assign({}, oneUserData[0]);
-                response.status(200).send(dbData);
-                return [3 /*break*/, 3];
+                console.log("oneuser data", response);
+                // const dbData = Object.assign({}, oneUserData[0]);
+                return [2 /*return*/, response.status(200).json(oneUserData)];
             case 2:
-                error_2 = _a.sent();
-                response.status(401).send(error_2);
-                return [3 /*break*/, 3];
+                error_1 = _a.sent();
+                return [2 /*return*/, response.status(401).json(error_1)];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.put("/", jwtMW, function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name_1, email, photo, userLogInData, id, oneUserData, dbData, error_3;
+    var _a, name_1, email, photo, userLogInData, id, oneUserData, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 3, , 4]);
                 _a = request.body, name_1 = _a.name, email = _a.email, photo = _a.photo;
-                return [4 /*yield*/, dbHelper.getUserByEmail(request.user.email)];
+                return [4 /*yield*/, userQueries_1.default.getUserByEmail(request.user.email)];
             case 1:
                 userLogInData = _b.sent();
                 id = userLogInData.id;
-                return [4 /*yield*/, dbHelper.updateUser(id, name_1, email, photo)];
+                return [4 /*yield*/, userQueries_1.default.updateUser(id, name_1, email, photo)];
             case 2:
                 oneUserData = _b.sent();
-                dbData = Object.assign({}, oneUserData);
-                response.status(200).send("Result from Update: " + Object.entries(dbData));
+                // const dbData = Object.assign({}, oneUserData);
+                response.status(200).json(oneUserData);
                 return [3 /*break*/, 4];
             case 3:
-                error_3 = _b.sent();
-                response.status(200).send(error_3);
+                error_2 = _b.sent();
+                response.status(200).json(error_2);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post("/signup", upload.single("file"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name, email, password, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, photo, user, error_4;
+    var _a, name, email, password, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, error_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                //checkValues() write function
-                //if user info is not passed in return
-                if (!name || !email || !password) {
-                    response
-                        .status(401)
-                        .send("please send over username, email and password");
-                    return [2 /*return*/];
+                if (!helpers.checkValues(name, email, password)) {
+                    return [2 /*return*/, response
+                            .status(401)
+                            .json({ message: "please json over username, email and password" })];
                 }
-                return [4 /*yield*/, dbHelper.getUserByEmail(email)];
+                return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
             case 1:
                 oneUserData = _b.sent();
                 dbData = Object.assign({}, oneUserData);
                 dbEmail = dbData.email;
                 if (email === dbEmail) {
-                    response
-                        .status(401)
-                        .send("A user with the email: " + email + " already exist in our system");
-                    return [2 /*return*/];
+                    return [2 /*return*/, response.status(401).json(email)];
                 }
                 if (!request.file) {
                     console.log("No file received");
-                    throw Error;
+                    return [2 /*return*/, response
+                            .status(402)
+                            .json({ message: "Please attach a file to the call" })];
                 }
                 else {
                     console.log("file received", request.file);
@@ -159,26 +143,22 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 4, , 5]);
-                photo = UPLOAD_PATH + email + "/" + request.file.originalname;
-                return [4 /*yield*/, dbHelper.createUser(name, email, password, photo)];
+                return [4 /*yield*/, userQueries_1.default.createUser(name, email, password, request.file.filename)];
             case 3:
                 user = _b.sent();
                 console.log("user was added", user);
-                // const addedUserData = Object.assign({}, user[0]);
-                response.status(201).send("The user was added " + user);
-                return [3 /*break*/, 5];
+                return [2 /*return*/, response.status(201).json("" + user)];
             case 4:
-                error_4 = _b.sent();
-                response
-                    .status(401)
-                    .send({ err: error_4, message: "please provide a valid userID" });
-                return [3 /*break*/, 5];
+                error_3 = _b.sent();
+                return [2 /*return*/, response
+                        .status(401)
+                        .json({ err: error_3, message: "please provide a valid userID" })];
             case 5: return [2 /*return*/];
         }
     });
 }); });
 router.post("/login", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, email, password, isValidEmail, userLogin, userLogInData, error_5;
+    var _a, email, password, isValidEmail, userLogin, userLogInData, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -188,29 +168,29 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
                 };
                 //if user info is not passed in return
                 if (!email || !password) {
-                    response.status(401).send("please send over username, email and password");
-                    return [2 /*return*/];
+                    return [2 /*return*/, response
+                            .status(401)
+                            .json("please json over username, email and password")];
                 }
                 if (!isValidEmail(email)) {
-                    response.status(401).send("email is not valid");
-                    return [2 /*return*/];
+                    return [2 /*return*/, response.status(401).json({ message: "email is not valid" })];
                 }
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, dbHelper.loginUser(email, password)];
+                return [4 /*yield*/, userQueries_1.default.loginUser(email, password)];
             case 2:
                 userLogin = _b.sent();
-                return [4 /*yield*/, dbHelper.getUserByEmail(email)];
+                return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
             case 3:
                 userLogInData = _b.sent();
                 console.log(userLogInData, "data2", userLogin);
-                return [2 /*return*/, response.status(201).send(userLogin)];
+                return [2 /*return*/, response.status(201).json(userLogin)];
             case 4:
-                error_5 = _b.sent();
+                error_4 = _b.sent();
                 return [2 /*return*/, response.status(401).json({
                         message: "Authentication failed",
-                        error: error_5
+                        error: error_4
                     })];
             case 5: return [2 /*return*/];
         }
@@ -218,23 +198,23 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
 }); });
 //@login implement login decorator
 router.put("/passwordUpdate", jwtMW, function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, token, id, oldPassword, newPassword1, newPassword2, oneUserData, hashedPasswordFromDB, match, updatePasswordResult, error_6;
+    var _a, token, id, oldPassword, newPassword1, newPassword2, oneUserData, hashedPasswordFromDB, match, updatePasswordResult, error_5;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = request.body, token = _a.token, id = _a.id, oldPassword = _a.oldPassword, newPassword1 = _a.newPassword1, newPassword2 = _a.newPassword2;
                 if (!token) {
-                    response.status(401).send("please send over a token");
+                    response.status(401).json({ message: "please json over a token" });
                     return [2 /*return*/];
                 }
                 if (newPassword1 !== newPassword2) {
-                    response.status(401).send("The passwords must match, please try again");
+                    response.status(401).json("The passwords must match, please try again");
                     return [2 /*return*/];
                 }
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 6, , 7]);
-                return [4 /*yield*/, dbHelper.getUserById(id)];
+                return [4 /*yield*/, userQueries_1.default.getUserById(id)];
             case 2:
                 oneUserData = _b.sent();
                 hashedPasswordFromDB = oneUserData[0].password;
@@ -242,22 +222,22 @@ router.put("/passwordUpdate", jwtMW, function (request, response) { return __awa
             case 3:
                 match = _b.sent();
                 if (!match) return [3 /*break*/, 5];
-                return [4 /*yield*/, dbHelper.passwordUpdate(id, newPassword1)];
+                return [4 /*yield*/, userQueries_1.default.passwordUpdate(id, newPassword1)];
             case 4:
                 updatePasswordResult = _b.sent();
-                response.status(201).send("your password has been updated");
+                response.status(201).json("your password has been updated");
                 _b.label = 5;
             case 5: return [3 /*break*/, 7];
             case 6:
-                error_6 = _b.sent();
-                response.status(401).send(error_6);
+                error_5 = _b.sent();
+                response.status(401).json(error_5);
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
         }
     });
 }); });
 router.delete("/", jwtMW, function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var userLogInData, error_7;
+    var userLogInData, error_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -265,16 +245,16 @@ router.delete("/", jwtMW, function (request, response) { return __awaiter(_this,
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, dbHelper.deleteUserByEmail(request.user.email)];
+                return [4 /*yield*/, userQueries_1.default.deleteUserByEmail(request.user.email)];
             case 2:
                 userLogInData = _a.sent();
-                response.status(200).send(userLogInData);
+                response.status(200).json(userLogInData);
                 return [3 /*break*/, 4];
             case 3:
-                error_7 = _a.sent();
-                response.status(401).send({
+                error_6 = _a.sent();
+                response.status(401).json({
                     message: "A valid token is required for this request",
-                    error: error_7
+                    error: error_6
                 });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];

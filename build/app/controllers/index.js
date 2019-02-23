@@ -5,5 +5,6 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./user.controller"));
 __export(require("./task.controller"));
+__export(require("./usertask.controller"));
 __export(require("./feedback.controller"));
 __export(require("./event.controller"));

@@ -34,6 +34,13 @@ const imageUpload = function(
   //   });
 };
 
+const checkValues = (value1: any, value2: any, value3: any) => {
+  if (!value1 || !value2 || !value3) {
+    return false;
+  }
+  return true;
+};
 module.exports = {
-  imageUpload
+  imageUpload,
+  checkValues
 };

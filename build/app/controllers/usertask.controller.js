@@ -37,21 +37,35 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var dbHelper = require("./controllerHelpers/taskQueries");
+var dbHelper = require("./controllerHelpers/usertaskQueries");
 var router = express_1.Router();
 router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        res.send("Hello, You're now in the task controller!");
+        res.send("Hello, You're now in the usertask controller!");
         return [2 /*return*/];
     });
 }); });
-router.get("/:task_id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+router.get("/task/:task_id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
     var task_id, onetaskData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 task_id = request.params.task_id;
-                return [4 /*yield*/, dbHelper.getTaskById(task_id)];
+                return [4 /*yield*/, dbHelper.getUserTaskByTaskId(task_id)];
+            case 1:
+                onetaskData = _a.sent();
+                response.status(200).send(onetaskData);
+                return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/user/:user_id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var user_id, onetaskData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                user_id = request.params.user_id;
+                return [4 /*yield*/, dbHelper.getUserTaskByUserId(user_id)];
             case 1:
                 onetaskData = _a.sent();
                 response.status(200).send(onetaskData);
@@ -60,48 +74,35 @@ router.get("/:task_id", function (request, response) { return __awaiter(_this, v
     });
 }); });
 router.post("/", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, task_title, task, date, createdTask;
+    var _a, task_id, user_id, createdAssociation;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, task_title = _a.task_title, task = _a.task, date = _a.date;
-                console.log("task data, ", task_title, task, date);
-                return [4 /*yield*/, dbHelper.createTask(task_title, task, date)];
+                _a = request.body, task_id = _a.task_id, user_id = _a.user_id;
+                console.log("user task data, ", task_id, user_id);
+                return [4 /*yield*/, dbHelper.associateUserWithTask(task_id, user_id)];
             case 1:
-                createdTask = _b.sent();
-                response.status(201).send(createdTask);
+                createdAssociation = _b.sent();
+                response.status(201).send(createdAssociation);
                 return [2 /*return*/];
         }
     });
 }); });
-router.put("/", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, task_id, task_title, task, date, onetaskData;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = request.body, task_id = _a.task_id, task_title = _a.task_title, task = _a.task, date = _a.date;
-                return [4 /*yield*/, dbHelper.updateTask(task_id, task_title, task, date)];
-            case 1:
-                onetaskData = _b.sent();
-                response.status(200).json(onetaskData);
-                return [2 /*return*/];
-        }
-    });
-}); });
-router.delete("/:task_id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var task_id, deletedResponse;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                task_id = request.params.task_id;
-                console.log("id of task", task_id);
-                return [4 /*yield*/, dbHelper.deleteTaskById(task_id)];
-            case 1:
-                deletedResponse = _a.sent();
-                // console.log("deletedresponse", deletedResponse);
-                response.status(200).send(deletedResponse);
-                return [2 /*return*/];
-        }
-    });
-}); });
-exports.taskController = router;
+// router.put("/", async (request: Request, response: Response) => {
+//   const { task_id, task_title, task, date } = request.body;
+//   const onetaskData = await dbHelper.updateTask(
+//     task_id,
+//     task_title,
+//     task,
+//     date
+//   );
+//   response.status(200).json(onetaskData);
+// });
+// router.delete("/:task_id", async (request: Request, response: Response) => {
+//   const { task_id } = request.params;
+//   console.log("id of task", task_id);
+//   const deletedResponse = await dbHelper.deleteTaskById(task_id);
+//   // console.log("deletedresponse", deletedResponse);
+//   response.status(200).send(deletedResponse);
+// });
+exports.usertaskController = router;
