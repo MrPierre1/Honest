@@ -62,6 +62,18 @@ router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, fu
         return [2 /*return*/];
     });
 }); });
+router.get("/all", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var allUsers;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, userQueries_1.default.getAllUsers()];
+            case 1:
+                allUsers = _a.sent();
+                res.status(201).json(allUsers);
+                return [2 /*return*/];
+        }
+    });
+}); });
 //@login
 router.get("/:id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
     var id, oneUserData, error_1;

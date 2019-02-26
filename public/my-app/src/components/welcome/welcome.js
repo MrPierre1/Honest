@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable no-unused-expressions */
 import React from 'react'
-function User (props) {
+function Welcome (props) {
   var anchorStyle = {
     textShadow: '0 -1px 0 rgba(0, 0, 0, 0.25)',
     color: 'red',
@@ -11,12 +11,11 @@ function User (props) {
 
   return (
     <div>
-      <div>
-        <a href='#' style={anchorStyle}><h2>{props.userName}</h2> <p> {props.userEmail} </p> <p> {props.userPhone} </p></a>
-        <h1>I'm on th user page</h1>
+      <div class='col s12 m7'>
+        <h2 class='header'>Welcome to the 1:1 Web App</h2>
       </div>
     </div>
   )
 }
 
-export default User
+export default Welcome

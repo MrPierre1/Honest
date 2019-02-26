@@ -13,6 +13,11 @@ code {
     monospace;
 }
 
+.activeSelect {
+  color: green;
+  font-weight: bold;
+}
+
 /* .parent {
   display: flex;
   align-items: center;

@@ -6,6 +6,15 @@ const results = (queryResult: any) => {
     : queryResult.rows[0];
 };
 
+const getAllTasks = async () => {
+  try {
+    const res = await pool.query(`SELECT * FROM tasks`);
+    console.log("res", res);
+    return res.rows;
+  } catch (error) {
+    return error;
+  }
+};
 const getTaskById = async (task_id: number) => {
   try {
     const res = await pool.query(
@@ -66,6 +75,7 @@ const deleteTaskById = async (task_id: number) => {
 
 module.exports = {
   getTaskById,
+  getAllTasks,
   createTask,
   updateTask,
   deleteTaskById

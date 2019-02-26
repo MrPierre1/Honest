@@ -71,7 +71,7 @@ var getAllUsers = function () { return __awaiter(_this, void 0, void 0, function
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("SELECT * FROM users")];
+                return [4 /*yield*/, pool.query("SELECT * FROM users LIMIT 5")];
             case 1:
                 getAll = _a.sent();
                 return [2 /*return*/, getAll.rows.length < 1 ? null : getAll.rows];

@@ -45,6 +45,19 @@ router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, fu
         return [2 /*return*/];
     });
 }); });
+router.get("/all", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var allTaskData;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, dbHelper.getAllTasks()];
+            case 1:
+                allTaskData = _a.sent();
+                console.log("all task data", allTaskData);
+                res.status(200).send(allTaskData);
+                return [2 /*return*/];
+        }
+    });
+}); });
 router.get("/:task_id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
     var task_id, onetaskData;
     return __generator(this, function (_a) {
@@ -65,10 +78,14 @@ router.post("/", function (request, response) { return __awaiter(_this, void 0, 
         switch (_b.label) {
             case 0:
                 _a = request.body, task_title = _a.task_title, task = _a.task, date = _a.date;
-                console.log("task data, ", task_title, task, date);
+                console.log("task data in the server, ", task_title, task, date, request.body);
                 return [4 /*yield*/, dbHelper.createTask(task_title, task, date)];
             case 1:
                 createdTask = _b.sent();
+                console.log(createdTask, "YES it's studdff", Object.entries(createdTask));
+                if (createdTask.name === "error") {
+                    response.status(501).send(createdTask.name);
+                }
                 response.status(201).send(createdTask);
                 return [2 /*return*/];
         }

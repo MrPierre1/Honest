@@ -41,8 +41,26 @@ var results = function (queryResult) {
         ? "Your query did not produce any valid results"
         : queryResult.rows[0];
 };
-var getTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, function () {
+var getAllTasks = function () { return __awaiter(_this, void 0, void 0, function () {
     var res, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, pool.query("SELECT * FROM tasks")];
+            case 1:
+                res = _a.sent();
+                console.log("res", res);
+                return [2 /*return*/, res.rows];
+            case 2:
+                error_1 = _a.sent();
+                return [2 /*return*/, error_1];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var getTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, function () {
+    var res, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -53,14 +71,14 @@ var getTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, f
                 console.log("res", res);
                 return [2 /*return*/, results(res)];
             case 2:
-                error_1 = _a.sent();
-                return [2 /*return*/, error_1];
+                error_2 = _a.sent();
+                return [2 /*return*/, error_2];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 var createTask = function (task_title, task, date) { return __awaiter(_this, void 0, void 0, function () {
-    var res, error_2;
+    var res, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -70,14 +88,14 @@ var createTask = function (task_title, task, date) { return __awaiter(_this, voi
                 res = _a.sent();
                 return [2 /*return*/, results(res)];
             case 2:
-                error_2 = _a.sent();
-                return [2 /*return*/, error_2];
+                error_3 = _a.sent();
+                return [2 /*return*/, error_3];
             case 3: return [2 /*return*/];
         }
     });
 }); };
 var updateTask = function (task_id, task_title, task, date) { return __awaiter(_this, void 0, void 0, function () {
-    var d, res, error_3;
+    var d, res, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -91,15 +109,15 @@ var updateTask = function (task_id, task_title, task, date) { return __awaiter(_
                 res = _a.sent();
                 return [2 /*return*/, results(res)];
             case 3:
-                error_3 = _a.sent();
-                console.log("there are errors", error_3);
-                return [2 /*return*/, error_3];
+                error_4 = _a.sent();
+                console.log("there are errors", error_4);
+                return [2 /*return*/, error_4];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 var deleteTaskById = function (task_id) { return __awaiter(_this, void 0, void 0, function () {
-    var res, error_4;
+    var res, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -114,15 +132,16 @@ var deleteTaskById = function (task_id) { return __awaiter(_this, void 0, void 0
                 console.log("done createing res", res);
                 return [2 /*return*/, results(res)];
             case 3:
-                error_4 = _a.sent();
-                console.log("found the error its, here", error_4);
-                return [2 /*return*/, console.log("error for the delete", error_4)];
+                error_5 = _a.sent();
+                console.log("found the error its, here", error_5);
+                return [2 /*return*/, console.log("error for the delete", error_5)];
             case 4: return [2 /*return*/];
         }
     });
 }); };
 module.exports = {
     getTaskById: getTaskById,
+    getAllTasks: getAllTasks,
     createTask: createTask,
     updateTask: updateTask,
     deleteTaskById: deleteTaskById

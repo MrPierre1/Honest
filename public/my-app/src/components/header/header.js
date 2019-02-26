@@ -1,42 +1,39 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable no-unused-expressions */
 import React from 'react'
 import { BrowserRouter, Route, Link } from 'react-router-dom'
 function Header (props) {
   return (
-
     <div className='App'>
       <nav>
-        <div class='nav-wrapper'>
-          <a href='#!' class='brand-logo'>Logo</a>
-          <a href='#' data-target='mobile-demo' class='sidenav-trigger'><i class='material-icons'>menu</i></a >
-                              <ul class='right hide-on-med-and-down'>
-                                <li>
-                      <Link to='user'>
-                    User
-    </Link>
-    </li>
-                              <li>
-                                 <Link to='signup'>
-                    Signup Form
-    </Link>
-    </li>
-                      <li>
-                        <a href='collapsible.html'>Javascript</a>
-          </li>
-          <li>
-            <a href='mobile.html'>Mobile</a>
-          </li>
+        <div className='nav-wrapper'>
+          <Link to='/' className='brand-logo'> Logo
+          </Link>
+          <a href='#' data-target='mobile-demo' className='sidenav-trigger'><i className='material-icons'>menu</i></a>
+          <ul className='right hide-on-med-and-down'>
+            <li>
+              <Link to='home'> Home
+              </Link>
+            </li>
+            <li>
+              <Link to='tasklist'> Task List
+              </Link>
+            </li>
+            <li>
+              <Link to='eventlist'> Event List
+              </Link>
+            </li>
+            <li>
+              <a href='mobile.html'>Mobile</a>
+            </li>
           </ul>
         </div>
       </nav>
-      <ul class='sidenav' id='mobile-demo'>
+      <ul className='sidenav' id='mobile-demo'>
         <li>
-          <Link to='user'> User
+          <Link to='home'> Home
           </Link>
         </li>
         <li>
-          <Link to='signup'> Signup Form
+          <Link to='tasklist'> Task List
           </Link>
         </li>
         <li>

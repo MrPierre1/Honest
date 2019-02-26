@@ -26,7 +26,7 @@ const getUserById = async (user_id: number): Promise<UserData> => {
 
 const getAllUsers = async () => {
   try {
-    const getAll = await pool.query(`SELECT * FROM users`);
+    const getAll = await pool.query(`SELECT * FROM users LIMIT 5`);
     return getAll.rows.length < 1 ? null : getAll.rows;
   } catch (error) {
     return error;

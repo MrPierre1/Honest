@@ -21,6 +21,10 @@ const jwtMW = exjwt({
 router.get("/", async (req: Request, res: Response) => {
   res.status(201).send("re now in the user controller!");
 });
+router.get("/all", async (req: Request, res: Response) => {
+  const allUsers: UserData = await dbHelper.getAllUsers();
+  res.status(201).json(allUsers);
+});
 
 //@login
 router.get(

@@ -3,11 +3,21 @@ import React, { Component } from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 
 import "./App.css";
-import Footer from "./components/footer/footer";
-import Header from "./components/header/header";
+import EventList from "./components/common/eventlist";
+import TaskList from "./components/common/tasklist";
 
+import Footer from "./components/footer/footer";
+
+import Header from "./components/header/header";
+import Home from "./components/home/home";
+
+import Login from "./components/login/login";
+
+import Root from "./components/root/root";
 import SignUpForm from "./components/signup/signup";
-import User from "./components/users/user";
+import TaskForm from "./components/taskform/taskform";
+
+import Welcome from "./components/welcome/welcome";
 
 class App extends Component {
   constructor(props) {
@@ -21,7 +31,7 @@ class App extends Component {
       posts: [],
       fromChild: "",
       postData: "",
-      isAuthenticated: false,
+      isAuthenticated: true,
     };
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
     this.handleData = this.handleData.bind(this);
@@ -77,37 +87,40 @@ class App extends Component {
 
   // componentDidMount () {
   async componentDidMount() {
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/users/`
-      );
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      var json = await response.json();
-      this.setState({ data: json });
-
-      const posts = await fetch(`https://jsonplaceholder.typicode.com/posts/`);
-
-      var jsonPosts = await posts.json();
-      this.setState({ posts: jsonPosts });
-
-      console.log("this.posts", jsonPosts, jsonPosts.id);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   const response = await fetch(
+    //     `https://jsonplaceholder.typicode.com/users/`
+    //   );
+    //   if (!response.ok) {
+    //     throw Error(response.statusText);
+    //   }
+    //   var json = await response.json();
+    //   this.setState({ data: json });
+    //   const posts = await fetch(`https://jsonplaceholder.typicode.com/posts/`);
+    //   var jsonPosts = await posts.json();
+    //   this.setState({ posts: jsonPosts });
+    //   console.log("this.posts", jsonPosts, jsonPosts.id);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   render() {
-    const isAuthenticated = this.state.isAuthenticated;
+    // const isAuthenticated = this.state.isAuthenticated;
     return (
       <BrowserRouter>
         <div>
           <Header />
-          <div>
-            <Route path="/user" component={User} />
-            <Route path="/signup" component={SignUpForm} />
-          </div>
+
+          <Route path="/" exact component={Root} />
+          <Route path="/home" component={Home} />
+          <Route path="/login" component={Login} />
+          <Route path="/signup" component={SignUpForm} />
+          <Route path="/welcome" component={Welcome} logged={true} />
+          <Route path="/task" component={TaskForm} logged={true} />
+          <Route path="/tasklist" component={TaskList} />
+          <Route path="/eventlist" component={EventList} />
+
           <Footer />
         </div>
       </BrowserRouter>

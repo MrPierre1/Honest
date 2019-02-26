@@ -9,11 +9,11 @@ function Footer (props) {
 
   return (
     <div className='App ' style={divStyle}>
-      <footer class='page-footer'>
-        <div class='footer-copyright marginforfooter'>
-          <div class='container'>
+      <footer className='page-footer'>
+        <div className='footer-copyright marginforfooter'>
+          <div className='container'>
             © 2014 Copyright Text
-            <a class='grey-text text-lighten-4 right' href='#!'>More Links</a>
+            <a className='grey-text text-lighten-4 right' href='#!'>More Links</a>
           </div>
         </div>
       </footer>

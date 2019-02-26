@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-
+import { BrowserRouter, Route, withRouter } from 'react-router-dom'
+import { Redirect } from 'react-router'
 class SignUpForm extends Component {
   constructor (props) {
     super(props)
@@ -10,7 +11,6 @@ class SignUpForm extends Component {
       name: '',
       password: '',
       file: ''
-
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSelectedFile = this.handleSelectedFile.bind(this)
@@ -37,13 +37,37 @@ class SignUpForm extends Component {
     }
     console.log('sending data to parent', userData, this.state.name)
 
-    this.props.onClick(userData)
+    var formInfo = new FormData()
+    formInfo.append('name', userData.name)
+    formInfo.append('email', userData.email)
+    formInfo.append('password', userData.password)
+    formInfo.append('file', userData.file)
+    axios({
+      method: 'post',
+      url: 'http://localhost:3000/user/signup',
+      data: formInfo,
+      config: { headers: { 'Content-Type': 'multipart/form-data' } }
+    })
+      .then(response => {
+        console.log('server response returned', response)
+        if (response.status === 201) {
+          localStorage.setItem('token', response.data)
+          this.setState({ isAuthenticated: true })
+          this.props.history.push('/welcome')
+        }
+      })
+      .catch(error => {
+        console.log('There were errors', error)
+      })
+
+  // this.props.onClick(userData)
   }
   render () {
     return (
       <div>
         <div>
-          <form onSubmit={this.handleSubmit}>
+          <h1 className='center-align'>SignUp</h1>
+          <form onSubmit={this.handleSubmit} className='container'>
             <input
               type='text'
               id='user_id'
@@ -81,15 +105,31 @@ class SignUpForm extends Component {
               placeholder='Password'
               onChange={this.handleChange}
               value={this.state.password} />
-            <div className='App'>
-              <input
-                type='file'
-                name='file'
-                id='file'
-                onChange={this.handleSelectedFile} />
+            {/*
+                                                                                                                                                                                                                                                            <div className='App'>
+                                                                                                                                                                                                                                                                <input
+                                                                                                                                                                                                                                                                  type='file'
+                                                                                                                                                                                                                                                                  name='file'
+                                                                                                                                                                                                                                                                  id='file'
+                                                                                                                                                                                                                                                                  onChange={this.handleSelectedFile} />
+                                                                                                                                                                                                                                                              </div>
+                                                                                                                                                                                                                                                            */}
+            <div className='file-field input-field'>
+              <div className='btn'>
+                <span>File</span>
+                <input
+                  type='file'
+                  name='file'
+                  id='file'
+                  onChange={this.handleSelectedFile} />
+              </div>
+              <div className='file-path-wrapper'>
+                <input className='file-path validate' type='text' />
+              </div>
             </div>
-            <button type='submit'>
+            <button className='btn waves-effect waves-light' type='submit' name='action'>
               Submit
+              <i className='material-icons right'>send</i>
             </button>
           </form>
         </div>

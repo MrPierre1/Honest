@@ -11,11 +11,6 @@ function UserList (props) {
             <div className=''>
               <ul>
                 <li style={{ listStyleType: 'none' }}>
-                  <User
-                    userPhone={props.userPhone}
-                    userName={props.userName}
-                    userEmail={props.userEmail}
-                    userId={props.userId}></User>
                   <hr />
                 </li>
               </ul>

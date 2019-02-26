@@ -1,0 +1,17 @@
+import React from 'react'
+import { BrowserRouter, Route, Link } from 'react-router-dom'
+import TaskForm from '../taskform/taskform'
+function Modal (props) {
+  return (
+    <div className='App'>
+      <div className='modal-content'>
+        <TaskForm></TaskForm>
+      </div>
+      <div className='modal-footer'>
+        <a href='#!' className='modal-close waves-effect waves-green btn-flat'>Cancel</a>
+      </div>
+    </div>
+  )
+}
+
+export default Modal

@@ -37,6 +37,25 @@
   /* padding: 2px 16px; */
 }
 
+.contantsButtonContainer {
+  position: relative;
+}
+.contantsButton {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.activeSelect {
+  color: red;
+  font-weight: bold;
+}
+
+.modal {
+  max-height: 100%;
+  overflow: visible;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
