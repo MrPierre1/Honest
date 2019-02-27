@@ -6,7 +6,7 @@ import React, { Component } from "react";
 class EventsList extends Component {
   state = {
     events: [],
-    events: [],
+
     dataevents: [],
   };
 

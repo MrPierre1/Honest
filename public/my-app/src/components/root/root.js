@@ -1,12 +1,9 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable no-unused-expressions */
 import React from 'react'
-// import { Route } from 'react-router'
-import { BrowserRouter, Route, Link } from 'react-router-dom'
-// import SignUpForm from './../signup/signup'
 
-import Login from '../login/login'
-// import SignUpForm from '../signup/signup'
+import { Link } from 'react-router-dom'
+
 
 function Root (props) {
   var divStyle = {

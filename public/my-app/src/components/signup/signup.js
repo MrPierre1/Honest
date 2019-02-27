@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { BrowserRouter, Route, withRouter } from 'react-router-dom'
-import { Redirect } from 'react-router'
+
+
 class SignUpForm extends Component {
   constructor (props) {
     super(props)
@@ -106,14 +106,14 @@ class SignUpForm extends Component {
               onChange={this.handleChange}
               value={this.state.password} />
             {/*
-                                                                                                                                                                                                                                                            <div className='App'>
-                                                                                                                                                                                                                                                                <input
-                                                                                                                                                                                                                                                                  type='file'
-                                                                                                                                                                                                                                                                  name='file'
-                                                                                                                                                                                                                                                                  id='file'
-                                                                                                                                                                                                                                                                  onChange={this.handleSelectedFile} />
-                                                                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                                                                            */}
+                                                                                                                                                                                                                                                                                    <div className='App'>
+                                                                                                                                                                                                                                                                                        <input
+                                                                                                                                                                                                                                                                                          type='file'
+                                                                                                                                                                                                                                                                                          name='file'
+                                                                                                                                                                                                                                                                                          id='file'
+                                                                                                                                                                                                                                                                                          onChange={this.handleSelectedFile} />
+                                                                                                                                                                                                                                                                                      </div>
+                                                                                                                                                                                                                                                                                    */}
             <div className='file-field input-field'>
               <div className='btn'>
                 <span>File</span>

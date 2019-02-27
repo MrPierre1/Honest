@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { Component } from "react";
-import SelectDropdown from "../common/SelectDropDown";
 import "materialize-css/dist/css/materialize.min.css";
 
 import M from "materialize-css/dist/js/materialize.min.js";
@@ -13,7 +12,9 @@ class TaskForm extends Component {
       date: "",
       users: [],
       dataUsers: [],
-      data: [
+      userList: "",
+      data: "",
+      arrayData: [
         {
           user_id: 6,
           email: "jekaoolln9@ltest.com",
@@ -59,8 +60,9 @@ class TaskForm extends Component {
     this.passDataToParent = this.passDataToParent.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     // try {
+    console.log("props from", this.props);
     var options = {
       onOpenStart: function() {
         console.log("Imcalled now");
@@ -69,33 +71,57 @@ class TaskForm extends Component {
     document.addEventListener("DOMContentLoaded", function() {
       var elems = document.querySelectorAll(".modal");
       var instances = M.Modal.init(elems, options);
-      console.log("elemes", elems);
+      console.log("elemes", instances);
     });
 
-    const users = axios("http://localhost:3000/user/all");
-    console.log("users, should ho here");
+    // const users = axios("http://localhost:3000/user/all");
+    // console.log("users, should ho here");
 
-    axios
-      .get("http://localhost:3000/user/all")
-      .then(function(response) {
-        // handle success
-        console.log(response);
-        // var data = response
-        // this.setState({users: response})
-        this.setState({
-          users: response.data,
-          dataUsers: response,
-        });
-        console.log("data its the data", response.data);
-      })
-      .catch(function(error) {
-        // handle error
-        console.log(error);
+    // axios
+    //   .get("http://localhost:3000/user/all")
+    //   .then(response => {
+    //     // handle success
+    //     console.log(response);
+    //     // var data = response
+    //     // this.setState({users: response})
+    //     this.setState({
+    //       users: response.data,
+    //       dataUsers: response.data,
+    //       data: response.data,
+    //     });
+
+    //     this.setState((prevState, response) => {
+    //       return { data: prevState.data, data: response };
+    //     });
+    //     console.log(" from taskform", this.state.data);
+    //   })
+    //   .catch(error => {
+    //     // handle error
+    //     console.log("there were errors", error);
+    //   });
+
+    try {
+      const userList = await axios.get("http://localhost:3000/user/all");
+
+      this.setState({
+        userList: userList.data,
       });
+      this.setState((prevState, response) => {
+        return { data: prevState.data, userList: response };
+      });
+    } catch (error) {
+      console.log("error is here", error);
+    }
+
+    console.log(
+      "date gathers from call",
+      this.state.userList,
+      this.setState.data
+    );
   }
 
-  passDataToParent(data) {
-    console.log("teh data is froom the child select dropdown ", data);
+  passDataToParent(mydata) {
+    console.log("teh data is froom the child select dropdown ");
 
     // this.setState((prevState, data) => {
     //   return { fromChild: prevState.fromChild, postData: data };
@@ -149,6 +175,7 @@ class TaskForm extends Component {
       <div>
         <div>
           <h1 className="center-align">Task {this.state.users}</h1>
+
           <form onSubmit={this.handleSubmit} className="container">
             <input
               type="text"
@@ -180,13 +207,15 @@ class TaskForm extends Component {
               required
             />
 
-            <SelectDropdown
+            {/* <SelectDropdown
               type="multiple"
-              data={this.state.data}
+              data={this.state.userList}
               handleFromParent={this.passDataToParent}
-            />
+              userList={this.state.data}
+              propData={this.props}
+            /> */}
 
-            <button type="submit" className="btn waves-effect waves-light">
+            <button type="submit" className="btn waves-effect waves-light ">
               Submit
               <i className="material-icons right">send</i>
             </button>

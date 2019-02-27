@@ -2,11 +2,14 @@
 /* eslint-disable no-unused-expressions */
 import axios from "axios";
 import React, { Component } from "react";
+import TaskTable from "./taskTable";
+import ActionSelector from "./actionSelector";
+import Modal from "./modal";
 
 class TaskList extends Component {
   state = {
     tasks: [],
-    datatasks: [],
+    datatasks: []
   };
 
   componentDidMount() {
@@ -23,7 +26,7 @@ class TaskList extends Component {
         // this.setState({tasks: response})
         this.setState({
           tasks: response.data,
-          datatasks: response,
+          datatasks: response
         });
         // console.log("data its the data", response.data);
       })
@@ -33,15 +36,17 @@ class TaskList extends Component {
       });
   }
   render() {
-    const userD = this.state.tasks.map(data => (
-      <li key={data.task_id} value={data.task_title}>
-        {data.task_id}
-        <br />
-        {data.task_title}
-      </li>
-    ));
-
-    return <div>{userD}</div>;
+    return (
+      <div>
+        <TaskTable data={this.state.tasks} />;
+        <div id="modal1" className="modal">
+          <Modal />
+        </div>
+        <div className="fixed-action-btn">
+          <ActionSelector />
+        </div>
+      </div>
+    );
   }
 }
 
