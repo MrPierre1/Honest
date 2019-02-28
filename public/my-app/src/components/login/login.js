@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import { Link } from 'react-router-dom'
 
 class LoginForm extends Component {
   constructor (props) {
@@ -43,7 +43,7 @@ class LoginForm extends Component {
     return (
       <div>
         <div>
-          <h1 className='center-align'>Login</h1>
+          <h1 className='center-align'>Login <button className='btn waves-effect waves-light btn-large white-text'> <Link to='/signup' className='white-text'> Signup </Link> </button></h1>
           <form onSubmit={this.handleSubmit} className='container'>
             <label>
               Email
@@ -65,9 +65,9 @@ class LoginForm extends Component {
               placeholder='Password'
               onChange={this.handleChange}
               value={this.state.password} />
-            <button class='waves-effect waves-light btn-large red lighten-1' type='submit' name='action'>
+            <button className='waves-effect waves-light btn-large red lighten-1' type='submit' name='action'>
               Submit
-              <i class='material-icons right'>send</i>
+              <i className='material-icons right'>send</i>
             </button>
           </form>
         </div>

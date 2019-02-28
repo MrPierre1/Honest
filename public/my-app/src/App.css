@@ -56,6 +56,17 @@
   overflow: visible;
 }
 
+.datepicker-container {
+  max-height: 100%;
+  width: 100%;
+}
+
+.datepicker-modal {
+  max-height: 100%;
+  width: 100%;
+  min-width: 100%;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

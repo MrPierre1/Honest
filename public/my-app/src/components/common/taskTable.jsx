@@ -19,7 +19,7 @@ class TaskTable extends Component {
         this.setState({
           tasks: response.data
         });
-        console.log("data its the data", ...this.state.tasks);
+        // console.log("data its the data", ...this.state.tasks);
       })
       .catch(error => {
         // handle error
@@ -31,25 +31,12 @@ class TaskTable extends Component {
       <div style={{ maxWidth: "100%" }}>
         <MaterialTable
           columns={[
-            { title: "Name", field: "name" },
-            { title: "Task title", field: "surname" },
-            { title: "Due Date", field: "birthYear", type: "numeric" }
+            { title: "Name", field: "task_title" },
+            { title: "Task title", field: "task" },
+            { title: "Due Date", field: "due_date", type: "date" }
           ]}
-          data={[
-            ...this.state.tasks
-            // {
-            //   name: "Mehmet",
-            //   surname: "Baran",
-            //   birthYear: 1987,
-            //   birthCity: 63
-            // },
-            // {
-            //   name: "this.state.tasks[0]",
-            //   surname: "two",
-            //   birthYear: 1987,
-            //   birthCity: 73
-            // }
-          ]}
+          data={this.state.tasks}
+          // Look a tthe date coluns and data being passed
           title="Tasks List"
         />
       </div>

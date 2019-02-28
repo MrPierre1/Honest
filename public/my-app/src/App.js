@@ -12,7 +12,6 @@ import Home from "./components/home/home";
 import Login from "./components/login/login";
 import Root from "./components/root/root";
 import SignUpForm from "./components/signup/signup";
-import TaskForm from "./components/taskform/taskform";
 
 class App extends Component {
   constructor(props) {
@@ -129,7 +128,7 @@ class App extends Component {
         <div>
           <Header />
           <Route path="/" exact component={Root} />
-          <Route path="/home" component={Home} />
+          <Route path="/home" component={Home} isAuthenticated={false} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUpForm} />
 
@@ -141,18 +140,20 @@ class App extends Component {
             logged={true}
             data={this.state.userList}
             <Route path="/tasks" something={"here"} component={{ TaskForm }} />
+          />// <Route
+          //   path="/task"
+          //   component={props => (
+          //     <TaskForm data={this.state.userList}>{props.children}</TaskForm>
+          //   )}
           />
            */}
 
+          <Route path="/tasklist" component={TaskList} isAuthenticated={true} />
           <Route
-            path="/task"
-            component={props => (
-              <TaskForm data={this.state.userList}>{props.children}</TaskForm>
-            )}
+            path="/eventlist"
+            component={EventList}
+            isAuthenticated={true}
           />
-
-          <Route path="/tasklist" component={TaskList} />
-          <Route path="/eventlist" component={EventList} />
           <Footer />
         </div>
       </BrowserRouter>

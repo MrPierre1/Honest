@@ -9,8 +9,28 @@ import Modal from "./modal";
 class TaskList extends Component {
   state = {
     tasks: [],
-    datatasks: []
+    datatasks: [],
+    isAuthenticated: ""
   };
+
+  componentWillMount() {
+    var token = localStorage.getItem("token");
+    var item = JSON.parse(token);
+    this.setState({
+      isAuthenticated: item
+    });
+
+    console.log(
+      "data its the data1111",
+      item,
+      "state",
+      this.state.isAuthenticated
+    );
+
+    if (!item) {
+      this.props.history.push("/");
+    }
+  }
 
   componentDidMount() {
     // try {
@@ -28,7 +48,17 @@ class TaskList extends Component {
           tasks: response.data,
           datatasks: response
         });
-        // console.log("data its the data", response.data);
+        // var token = localStorage.getItem("token");
+        // var item = JSON.parse(token);
+        // this.setState({
+        //   isAuthenticated: item
+        // });
+
+        // console.log("data its the data", item, this.state.isAuthenticated);
+
+        // if (!this.state.isAuthenticated) {
+        //   this.props.history.push("/");
+        // }
       })
       .catch(error => {
         // handle error
