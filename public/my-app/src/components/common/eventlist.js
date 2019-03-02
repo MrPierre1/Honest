@@ -12,36 +12,16 @@ class EventsList extends Component {
 
   componentWillMount() {
     var token = localStorage.getItem("token");
-    var item = JSON.parse(token);
-    this.setState({
-      isAuthenticated: item,
-    });
-
-    console.log(
-      "data its the data1111",
-      item,
-      "state",
-      this.state.isAuthenticated
-    );
-
-    if (!item) {
+    if (!token) {
+      console.log("there was no token");
       this.props.history.push("/");
+    } else {
+      this.setState({
+        isAuthenticated: true,
+      });
     }
   }
   componentDidMount() {
-    var token = localStorage.getItem("token");
-    var item = JSON.parse(token);
-    this.setState({
-      isAuthenticated: item,
-    });
-
-    console.log("data its the data", item, this.state.isAuthenticated);
-
-    if (!this.state.isAuthenticated) {
-      this.props.history.push("/");
-    }
-
-    // try {
     // const events = axios("http://localhost:3000/user/all");
     // console.log("events, should ho here");
     axios

@@ -2,36 +2,37 @@ import axios from "axios";
 import React, { Component } from "react";
 import "materialize-css/dist/css/materialize.min.css";
 import M from "materialize-css/dist/js/materialize.min.js";
-import $ from "jquery";
+
 class UserSelectDropDown extends Component {
-  state = {
-    selectedValue: [],
-    juice: [],
-    test: "",
-    userList: []
-  };
+  constructor(props) {
+    super();
+    this.state = {
+      selectedValue: [],
+      juice: [],
+      test: "",
+      userList: [],
+      values: []
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
 
   componentWillMount() {
-    // var optionsr = {
-    //   autoClose: true,
-    //   disableWeekends: true
-    // };
-    // document.addEventListener("DOMContentLoaded", function() {
-    //   var elemsr = document.querySelectorAll("select");
-    //   var instancesr = M.FormSelect.init(elemsr);
-    //   console.log("instate", instancesr);
-    // });
+    var options = {
+      autoClose: true,
+      disableWeekends: true
+    };
+    var elems = document.querySelectorAll("select");
+    M.FormSelect.init(elems, options);
   }
 
   componentDidMount = async () => {
-    document.addEventListener("DOMContentLoaded", function() {
-      var elemsg = document.querySelectorAll("select");
-      var instancese = M.FormSelect.init(elemsg);
-      console.log("instate", instancese);
-    });
+    // document.addEventListener("DOMContentLoaded", function() {
+    //   var elemsg = document.querySelectorAll("select");
+    //   var instancese = M.FormSelect.init(elemsg);
 
-    console.log("props are here", this.props, this.state);
-    console.log("props data for drowpdown", this.props.data);
+    //   console.log("instate", instancese, "value ");
+    // });
+
     try {
       const userList = await axios.get("http://localhost:3000/user/all");
 
@@ -39,24 +40,38 @@ class UserSelectDropDown extends Component {
         userList: userList.data,
         test: userList.data[0]
       });
-      console.log("user list", this.state.userList[0], "test", this.state.test);
+      // console.log("user list", this.state.userList[0], "test", this.state.test);
     } catch (error) {
       console.log("error is here", error);
     }
     M.AutoInit();
   };
 
+  handleChange(e) {
+    console.log("options23", e.target.options);
+    console.log("options25", e.target.selectedOptions);
+
+    this.setState({
+      values: [...e.target.selectedOptions].map(o =>
+        this.props.handleDPData(o.value)
+      )
+    });
+
+    // this.props.handleDPData([...e.target.selectedOptions]);
+  }
+
   render() {
     const userOption = this.state.userList.map(user => (
-      <option key={user.user_id} value={user.name}>
+      <option key={user.user_id} value={user.user_id}>
         {user.name}
       </option>
     ));
 
+    console.log("datafromvalueee--", this.state.values);
     return (
       <div className="input-field col s12">
-        <select multiple>
-          <option value="" disabled>
+        <select multiple onChange={this.handleChange}>
+          <option value={this.state.values} disabled>
             Choose your option
           </option>
           {userOption}

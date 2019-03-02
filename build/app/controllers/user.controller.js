@@ -196,11 +196,17 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
                 return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
             case 3:
                 userLogInData = _b.sent();
-                console.log(userLogInData, "data2", userLogin);
-                return [2 /*return*/, response.status(201).json(userLogin)];
+                console.log("youser logingdata", userLogInData, Object.keys(userLogInData).length);
+                if (Object.keys(userLogInData).length < 5) {
+                    return [2 /*return*/, response.status(401).json({
+                            message: "Authentication failed"
+                        })];
+                }
+                return [2 /*return*/, response.status(201).json(userLogInData)];
             case 4:
                 error_4 = _b.sent();
-                return [2 /*return*/, response.status(401).json({
+                console.log(error_4);
+                return [2 /*return*/, response.status(403).json({
                         message: "Authentication failed",
                         error: error_4
                     })];

@@ -33,7 +33,7 @@ class TaskTable extends Component {
           columns={[
             { title: "Name", field: "task_title" },
             { title: "Task title", field: "task" },
-            { title: "Due Date", field: "due_date", type: "date" }
+            { title: "Due Date", field: "date", type: "date" }
           ]}
           data={this.state.tasks}
           // Look a tthe date coluns and data being passed

@@ -133,10 +133,21 @@ router.post("/login", async (request: UserDataRequest, response: Response) => {
   try {
     const userLogin = await dbHelper.loginUser(email, password);
     const userLogInData = await dbHelper.getUserByEmail(email);
-    console.log(userLogInData, "data2", userLogin);
-    return response.status(201).json(userLogin);
+    console.log(
+      "youser logingdata",
+      userLogInData,
+      Object.keys(userLogInData).length
+    );
+
+    if (Object.keys(userLogInData).length < 5) {
+      return response.status(401).json({
+        message: "Authentication failed"
+      });
+    }
+    return response.status(201).json(userLogInData);
   } catch (error) {
-    return response.status(401).json({
+    console.log(error);
+    return response.status(403).json({
       message: "Authentication failed",
       error: error
     });

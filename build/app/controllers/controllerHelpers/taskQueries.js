@@ -83,7 +83,7 @@ var createTask = function (task_title, task, date) { return __awaiter(_this, voi
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("INSERT INTO tasks (task_title, task, date) VALUES ($1, $2, $3) returning task_id  task_title, task", [task_title, task, date])];
+                return [4 /*yield*/, pool.query("INSERT INTO tasks (task_title, task, date) VALUES ($1, $2, $3) returning task_id  task_title", [task_title, task, date])];
             case 1:
                 res = _a.sent();
                 return [2 /*return*/, results(res)];

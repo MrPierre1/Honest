@@ -15,20 +15,13 @@ class TaskList extends Component {
 
   componentWillMount() {
     var token = localStorage.getItem("token");
-    var item = JSON.parse(token);
-    this.setState({
-      isAuthenticated: item
-    });
-
-    console.log(
-      "data its the data1111",
-      item,
-      "state",
-      this.state.isAuthenticated
-    );
-
-    if (!item) {
+    if (!token) {
+      console.log("there was no token");
       this.props.history.push("/");
+    } else {
+      this.setState({
+        isAuthenticated: true
+      });
     }
   }
 

@@ -8,7 +8,7 @@ import { UserData } from "./../interfaces";
 
 const results = (queryResult: any) => {
   return queryResult.rows.length < 1
-    ? "Your query did not produce any valid results"
+    ? Error("Your query did not produce any valid results")
     : queryResult.rows[0];
 };
 

@@ -44,7 +44,7 @@ var jwt = require("jsonwebtoken");
 var secret = process.env.SECRET;
 var results = function (queryResult) {
     return queryResult.rows.length < 1
-        ? "Your query did not produce any valid results"
+        ? Error("Your query did not produce any valid results")
         : queryResult.rows[0];
 };
 var getUserById = function (user_id) { return __awaiter(_this, void 0, void 0, function () {

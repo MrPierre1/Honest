@@ -4,8 +4,7 @@ import React, { Component } from "react";
 import "materialize-css/dist/css/materialize.min.css";
 import M from "materialize-css/dist/js/materialize.min.js";
 import UserSelectDropDown from "../common/dropdown";
-import MySelectDropDown from "../common/MySelectDropDown";
-import $ from "jquery";
+
 class TaskForm extends Component {
   constructor(props) {
     super(props);
@@ -16,14 +15,15 @@ class TaskForm extends Component {
       users: [],
       dataUsers: [],
       userList: "",
-      data: ""
+      data: "",
+      userTask: [],
+      addedTask: "",
+      assignedUsers: []
     };
 
-    // var data = ;
     this.handleChange = this.handleChange.bind(this);
-
+    this.handleData = this.handleData.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.passDataToParent = this.passDataToParent.bind(this);
   }
   componentWillMount() {
     var options = {
@@ -32,8 +32,7 @@ class TaskForm extends Component {
     };
     document.addEventListener("DOMContentLoaded", function() {
       var elems = document.querySelectorAll("select");
-      var instances = M.FormSelect.init(elems, options);
-      console.log("instate", instances);
+      M.FormSelect.init(elems, options);
     });
     M.AutoInit();
   }
@@ -45,16 +44,16 @@ class TaskForm extends Component {
         console.log("Imcalled now");
       }
     };
-    var options2 = {
-      autoClose: true,
-      disableWeekends: true
-    };
+    // var options2 = {
+    //   autoClose: true,
+    //   disableWeekends: true
+    // };
     document.addEventListener("DOMContentLoaded", function() {
       var elems = document.querySelectorAll(".modal");
       var instances = M.Modal.init(elems, options);
 
-      var elems2 = document.querySelectorAll(".datepicker");
-      var instances2 = M.Datepicker.init(elems2, options2);
+      // var elems2 = document.querySelectorAll(".datepicker");
+      // var instances2 = M.Datepicker.init(elems2, options2);
 
       var elems3 = document.querySelectorAll(".dropdown-trigger");
       var instances3 = M.Dropdown.init(elems3);
@@ -62,20 +61,13 @@ class TaskForm extends Component {
       var elemsselect = document.querySelectorAll("select");
       var instances5 = M.FormSelect.init(elemsselect);
 
-      console.log("elemes", instances, instances2, instances3, instances5);
+      console.log("elemes", instances, instances3, instances5);
     });
     M.AutoInit();
   }
 
-  passDataToParent(mydata) {
-    console.log("teh data is froom the child select dropdown ");
-
-    // this.setState((prevState, data) => {
-    //   return { fromChild: prevState.fromChild, postData: data };
-    // });
-  }
-
   handleChange(e) {
+    console.log("its E DATA ----------", e);
     this.setState({ [e.target.name]: e.target.value });
   }
 
@@ -84,38 +76,45 @@ class TaskForm extends Component {
     textDecoration: "none"
   };
 
-  handleSubmit(e) {
+  async handleSubmit(e) {
     e.preventDefault();
+    var uniqUsers = [...new Set(this.state.assignedUsers)];
+
+    console.log("users assigned", uniqUsers, uniqUsers.length);
+
     const userTask = {
       task_title: this.state.task_title,
       task: this.state.task,
-      date: this.state.date
+      date: "12-12-12"
     };
-    console.log("sending data to parent", userTask, this.state.task_title);
 
-    axios({
-      method: "post",
-      url: "http://localhost:3000/task",
-      data: {
-        task_title: this.state.task_title,
-        task: this.state.task,
-        date: this.state.date
+    try {
+      const addTask = await axios.post("http://localhost:3000/task", userTask);
+
+      console.log("added task data", addTask.data.task_title);
+      const taskId = addTask.data.task_title;
+
+      for (let i = 0; i <= uniqUsers.length - 1; i++) {
+        // console.log("I'm in the oop", i, uniqUsers[i]);
+        const associateUserWithTask = await axios.post(
+          "http://localhost:3000/usertask",
+          { task_id: taskId, user_id: uniqUsers[i] }
+        );
       }
-      // config: { headers: { 'Content-Type': 'json/application' } }
-    })
-      .then(response => {
-        console.log("server response returned for task", response);
-        if (response.status === 201) {
-          localStorage.setItem("token", response.data);
-          this.setState({ isAuthenticated: true });
-          // this.props.history.push('/welcome')
-        }
-      })
-      .catch(error => {
-        console.log("There were errors", error);
+
+      M.toast({
+        html: `Task ${this.state.task_title} was added`,
+        classes: "rounded center closerToCenter"
       });
 
-    // this.props.onClick(userTask)
+      // this.setState({ task_title: "", task: "", assignedUsers: [] });
+    } catch (error) {
+      console.log("There were errors adding the task", error);
+    }
+  }
+
+  handleData(e) {
+    this.state.assignedUsers.push(e);
   }
   render() {
     return (
@@ -144,7 +143,7 @@ class TaskForm extends Component {
               required
             />
 
-            <input
+            {/* <input
               type="text"
               className="datepicker"
               id="date"
@@ -153,16 +152,9 @@ class TaskForm extends Component {
               onChange={this.handleChange}
               value={this.state.date}
               required
-            />
+            /> */}
 
-            {/**
-             *  <MySelectDropDown />
-             */}
-            {/* <a class="dropdown-trigger btn" href="#" data-target="dropdown1">
-              Assign to a user
-            </a> */}
-
-            <UserSelectDropDown />
+            <UserSelectDropDown handleDPData={this.handleData} />
 
             <button type="submit" className="btn waves-effect waves-light ">
               Submit

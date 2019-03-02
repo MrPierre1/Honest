@@ -2,25 +2,18 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class Header extends Component {
-  state = { isAuthenticated: "" };
+  state = { isAuthenticated: false };
 
   componentWillMount() {
     var token = localStorage.getItem("token");
-    var item = JSON.parse(token);
-    this.setState({
-      isAuthenticated: item,
-    });
-
-    console.log(
-      "data its the data1111header",
-      item,
-      "state",
-      this.state.isAuthenticated
-    );
-
-    // if (!item) {
-    //   this.props.history.push("/");
-    // }
+    if (!token) {
+      console.log("there was no token");
+    } else {
+      this.setState({
+        isAuthenticated: true,
+      });
+    }
+    // var item = JSON.parse(token);
   }
   render() {
     const isAuthenticated = this.state.isAuthenticated;

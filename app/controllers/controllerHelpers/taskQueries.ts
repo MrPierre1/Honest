@@ -30,7 +30,7 @@ const getTaskById = async (task_id: number) => {
 const createTask = async (task_title: string, task: string, date: number) => {
   try {
     const res = await pool.query(
-      "INSERT INTO tasks (task_title, task, date) VALUES ($1, $2, $3) returning task_id  task_title, task",
+      "INSERT INTO tasks (task_title, task, date) VALUES ($1, $2, $3) returning task_id  task_title",
       [task_title, task, date]
     );
 
