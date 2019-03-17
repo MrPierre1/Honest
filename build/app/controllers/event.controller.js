@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var dbHelper = require("./controllerHelpers/eventQueries");
+var dbHelper = require("./eventQueries");
 var router = express_1.Router();
 router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {

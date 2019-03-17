@@ -4,14 +4,17 @@ import { BrowserRouter, Route } from "react-router-dom";
 
 import "./App.css";
 import EventList from "./components/common/eventlist";
-import TaskList from "./components/common/tasklist.jsx";
+import Footer from "./components/common/footer.jsx";
 
-import Footer from "./components/footer/footer";
-import Header from "./components/header/header";
-import Home from "./components/home/home";
-import Login from "./components/login/login";
-import Root from "./components/root/root";
-import SignUpForm from "./components/signup/signup";
+import Header from "./components/common/header.js";
+import Root from "./components/common/root.jsx";
+import Home from "./components/pages/home/home.jsx";
+import Login from "./components/pages/login/login.jsx";
+import ManagerSignUpForm from "./components/pages/signup/managerSignup.jsx";
+import SignUpForm from "./components/pages/signup/signup.jsx";
+
+import TaskList from "./components/pages/tasks/tasklist.jsx";
+import "materialize-css/dist/css/materialize.min.css";
 
 class App extends Component {
   constructor(props) {
@@ -34,22 +37,10 @@ class App extends Component {
 
   handleData(data) {
     console.log("teh data is froom the child ", data);
-    // this.setState({
-    //   fromChild: data,
-    // })
-
-    // this.setState(state => {
-    //   return { formChild: data }
-    // })
 
     this.setState((prevState, data) => {
       return { fromChild: prevState.fromChild, postData: data };
     });
-    // console.log("2m the child ", typeof data)
-
-    //
-
-    // // debugger
   }
 
   handleFormSubmit(data) {
@@ -81,48 +72,18 @@ class App extends Component {
   }
 
   // componentDidMount () {
-  async componentDidMount() {
+  componentDidMount = async () => {
     try {
       const userList = await axios.get("http://localhost:3000/user/all");
-
       this.setState({
         userList: userList.data,
       });
     } catch (error) {
       console.log("error is here", error);
     }
-
-    // .then(response => {
-    //   console.log('dropdown dataresponse', response)
-    //   this.setState({
-    //     userData: response.data
-    //   })
-    //   console.log('DROPDOWN juice', this.state.userData)
-    // })
-    // .catch(error => {
-    //   console.log('I saw errors dued', error)
-    // })
-
-    // try {
-    //   const response = await fetch(
-    //     `https://jsonplaceholder.typicode.com/users/`
-    //   )
-    //   if (!response.ok) {
-    //     throw Error(response.statusText)
-    //   }
-    //   var json = await response.json()
-    //   this.setState({ data: json })
-    //   const posts = await fetch(`https://jsonplaceholder.typicode.com/posts/`)
-    //   var jsonPosts = await posts.json()
-    //   this.setState({ posts: jsonPosts })
-    //   console.log("this.posts", jsonPosts, jsonPosts.id)
-    // } catch (error) {
-    //   console.log(error)
-    // }
-  }
+  };
 
   render() {
-    // const isAuthenticated = this.state.isAuthenticated
     return (
       <BrowserRouter>
         <div>
@@ -131,22 +92,7 @@ class App extends Component {
           <Route path="/home" component={Home} isAuthenticated={false} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUpForm} />
-
-          {/**
-           * 
-           <Route
-            path="/task"
-            component={TaskForm}
-            logged={true}
-            data={this.state.userList}
-            <Route path="/tasks" something={"here"} component={{ TaskForm }} />
-          />// <Route
-          //   path="/task"
-          //   component={props => (
-          //     <TaskForm data={this.state.userList}>{props.children}</TaskForm>
-          //   )}
-          />
-           */}
+          <Route path="/manager" component={ManagerSignUpForm} />
 
           <Route path="/tasklist" component={TaskList} isAuthenticated={true} />
           <Route

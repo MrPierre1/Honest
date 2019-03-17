@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-const dbHelper = require("./controllerHelpers/usertaskQueries");
+const dbHelper = require("./usertaskQueries");
 const router: Router = Router();
 
 interface UserTaskData {

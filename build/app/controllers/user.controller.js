@@ -41,10 +41,9 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var multer = require("multer");
-// const dbHelper = require("./controllerHelpers/userQueries");
-var userQueries_1 = __importDefault(require("./controllerHelpers/userQueries"));
-var authHelper = require("./auth");
+var userQueries_1 = __importDefault(require("./../services/userQueries"));
 var fs = require("fs");
+var requestCall = require("request");
 var helpers = require("./helpers");
 var router = express_1.Router();
 var UPLOAD_PATH = "uploads/";
@@ -74,9 +73,29 @@ router.get("/all", function (req, res) { return __awaiter(_this, void 0, void 0,
         }
     });
 }); });
+router.get("/email/:email", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var email, oneUserData, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                email = request.params.email;
+                return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
+            case 1:
+                oneUserData = _a.sent();
+                console.log("oneuser data email", response);
+                // const dbData = Object.assign({}, oneUserData[0]);
+                return [2 /*return*/, response.status(200).json(oneUserData)];
+            case 2:
+                error_1 = _a.sent();
+                return [2 /*return*/, response.status(401).json(error_1)];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 //@login
 router.get("/:id", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var id, oneUserData, error_1;
+    var id, oneUserData, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -89,14 +108,14 @@ router.get("/:id", function (request, response) { return __awaiter(_this, void 0
                 // const dbData = Object.assign({}, oneUserData[0]);
                 return [2 /*return*/, response.status(200).json(oneUserData)];
             case 2:
-                error_1 = _a.sent();
-                return [2 /*return*/, response.status(401).json(error_1)];
+                error_2 = _a.sent();
+                return [2 /*return*/, response.status(401).json(error_2)];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.put("/", jwtMW, function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name_1, email, photo, userLogInData, id, oneUserData, error_2;
+    var _a, name_1, email, photo, userLogInData, id, oneUserData, error_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -113,23 +132,25 @@ router.put("/", jwtMW, function (request, response) { return __awaiter(_this, vo
                 response.status(200).json(oneUserData);
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _b.sent();
-                response.status(200).json(error_2);
+                error_3 = _b.sent();
+                response.status(200).json(error_3);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post("/signup", upload.single("file"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name, email, password, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, error_3;
+    var _a, name, email, password, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, req, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                console.log("redbod", request.body);
                 _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                if (!helpers.checkValues(name, email, password)) {
+                // if (!helpers.checkValues(name, email, password)) {
+                if (!name || !email || !password) {
                     return [2 /*return*/, response
                             .status(401)
-                            .json({ message: "please json over username, email and password" })];
+                            .json({ message: "please send over name, email and password" })];
                 }
                 return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
             case 1:
@@ -158,19 +179,60 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                 return [4 /*yield*/, userQueries_1.default.createUser(name, email, password, request.file.filename)];
             case 3:
                 user = _b.sent();
-                console.log("user was added", user);
-                return [2 /*return*/, response.status(201).json("" + user)];
+                console.log(user, "user was added", user.userdata[0]);
+                if (user.userdata[0].user_id) {
+                    req = requestCall.post("http://localhost:3000/manager/", {
+                        json: {
+                            manager_id: 1,
+                            direct_reports: 90
+                        }
+                    });
+                    console.log("redddddqqqq", req);
+                }
+                return [2 /*return*/, response.status(201).send({ user: user })];
             case 4:
-                error_3 = _b.sent();
+                error_4 = _b.sent();
                 return [2 /*return*/, response
                         .status(401)
-                        .json({ err: error_3, message: "please provide a valid userID" })];
+                        .json({ err: error_4, message: "please provide a valid userID" })];
             case 5: return [2 /*return*/];
         }
     });
 }); });
+router.post("/create_reports", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var _a, manager_id, direct_reports, user, returnedData, error_5;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = request.body, manager_id = _a.manager_id, direct_reports = _a.direct_reports;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, userQueries_1.default.createReports(manager_id, direct_reports)];
+            case 2:
+                user = _b.sent();
+                // const userData = await dbHelper.getUserByEmail(email);
+                console.log("youser logingdata", user, Object.keys(user).length);
+                if (Object.keys(user).length < 5) {
+                    return [2 /*return*/, response.status(401).json({
+                            message: " failed"
+                        })];
+                }
+                returnedData = { user: user };
+                return [2 /*return*/, response.status(201).json(returnedData)];
+            case 3:
+                error_5 = _b.sent();
+                console.log(error_5);
+                return [2 /*return*/, response.status(403).json({
+                        message: " failed",
+                        error: error_5
+                    })];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
 router.post("/login", function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, email, password, isValidEmail, userLogin, userLogInData, error_4;
+    var _a, email, password, isValidEmail, userLogin, userLogInData, returnedData, error_6;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -196,19 +258,20 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
                 return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
             case 3:
                 userLogInData = _b.sent();
-                console.log("youser logingdata", userLogInData, Object.keys(userLogInData).length);
-                if (Object.keys(userLogInData).length < 5) {
+                console.log("youser logingdata", userLogin, Object.keys(userLogin).length);
+                if (Object.keys(userLogin).length < 5) {
                     return [2 /*return*/, response.status(401).json({
                             message: "Authentication failed"
                         })];
                 }
-                return [2 /*return*/, response.status(201).json(userLogInData)];
+                returnedData = { token: userLogin, userData: userLogInData };
+                return [2 /*return*/, response.status(201).json(returnedData)];
             case 4:
-                error_4 = _b.sent();
-                console.log(error_4);
+                error_6 = _b.sent();
+                console.log(error_6);
                 return [2 /*return*/, response.status(403).json({
                         message: "Authentication failed",
-                        error: error_4
+                        error: error_6
                     })];
             case 5: return [2 /*return*/];
         }
@@ -216,7 +279,7 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
 }); });
 //@login implement login decorator
 router.put("/passwordUpdate", jwtMW, function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, token, id, oldPassword, newPassword1, newPassword2, oneUserData, hashedPasswordFromDB, match, updatePasswordResult, error_5;
+    var _a, token, id, oldPassword, newPassword1, newPassword2, oneUserData, hashedPasswordFromDB, match, updatePasswordResult, error_7;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -247,15 +310,15 @@ router.put("/passwordUpdate", jwtMW, function (request, response) { return __awa
                 _b.label = 5;
             case 5: return [3 /*break*/, 7];
             case 6:
-                error_5 = _b.sent();
-                response.status(401).json(error_5);
+                error_7 = _b.sent();
+                response.status(401).json(error_7);
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
         }
     });
 }); });
 router.delete("/", jwtMW, function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var userLogInData, error_6;
+    var userLogInData, error_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -269,10 +332,10 @@ router.delete("/", jwtMW, function (request, response) { return __awaiter(_this,
                 response.status(200).json(userLogInData);
                 return [3 /*break*/, 4];
             case 3:
-                error_6 = _a.sent();
+                error_8 = _a.sent();
                 response.status(401).json({
                     message: "A valid token is required for this request",
-                    error: error_6
+                    error: error_8
                 });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];

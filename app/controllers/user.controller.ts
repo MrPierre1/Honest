@@ -1,9 +1,8 @@
 import { Router, Request, Response } from "express";
 const multer = require("multer");
-// const dbHelper = require("./controllerHelpers/userQueries");
-import dbHelper from "./controllerHelpers/userQueries";
-const authHelper = require("./auth");
+import dbHelper from "./../services/userQueries";
 const fs = require("fs");
+const requestCall = require("request");
 const helpers = require("./helpers");
 const router: Router = Router();
 const UPLOAD_PATH = "uploads/";
@@ -25,6 +24,23 @@ router.get("/all", async (req: Request, res: Response) => {
   const allUsers: UserData = await dbHelper.getAllUsers();
   res.status(201).json(allUsers);
 });
+
+router.get(
+  "/email/:email",
+
+  async (request: Request, response: Response) => {
+    try {
+      const { email } = request.params;
+      const oneUserData = await dbHelper.getUserByEmail(email);
+
+      console.log("oneuser data email", response);
+      // const dbData = Object.assign({}, oneUserData[0]);
+      return response.status(200).json(oneUserData);
+    } catch (error) {
+      return response.status(401).json(error);
+    }
+  }
+);
 
 //@login
 router.get(
@@ -60,12 +76,14 @@ router.put("/", jwtMW, async (request: UserDataRequest, response: Response) => {
 router.post(
   "/signup",
   upload.single("file"),
-  async (request: UserDataRequest, response: Response) => {
+  async (request: Request, response: Response) => {
+    console.log("redbod", request.body);
     const { name, email, password } = request.body;
-    if (!helpers.checkValues(name, email, password)) {
+    // if (!helpers.checkValues(name, email, password)) {
+    if (!name || !email || !password) {
       return response
         .status(401)
-        .json({ message: "please json over username, email and password" });
+        .json({ message: "please send over name, email and password" });
     }
 
     const oneUserData = await dbHelper.getUserByEmail(email);
@@ -102,8 +120,19 @@ router.post(
         password,
         request.file.filename
       );
-      console.log("user was added", user);
-      return response.status(201).json(`${user}`);
+      console.log(user, "user was added", user.userdata[0]);
+
+      if (user.userdata[0].user_id) {
+        var req = requestCall.post("http://localhost:3000/manager/", {
+          json: {
+            manager_id: 1,
+            direct_reports: 90
+          }
+        });
+        console.log("redddddqqqq", req);
+      }
+
+      return response.status(201).send({ user });
     } catch (error) {
       return response
         .status(401)
@@ -111,6 +140,31 @@ router.post(
     }
   }
 );
+
+router.post("/create_reports", async (request: Request, response: Response) => {
+  const { manager_id, direct_reports } = request.body;
+
+  try {
+    const user = await dbHelper.createReports(manager_id, direct_reports);
+    // const userData = await dbHelper.getUserByEmail(email);
+    console.log("youser logingdata", user, Object.keys(user).length);
+
+    if (Object.keys(user).length < 5) {
+      return response.status(401).json({
+        message: " failed"
+      });
+    }
+
+    var returnedData = { user };
+    return response.status(201).json(returnedData);
+  } catch (error) {
+    console.log(error);
+    return response.status(403).json({
+      message: " failed",
+      error: error
+    });
+  }
+});
 
 router.post("/login", async (request: UserDataRequest, response: Response) => {
   const { email, password } = request.body;
@@ -133,18 +187,16 @@ router.post("/login", async (request: UserDataRequest, response: Response) => {
   try {
     const userLogin = await dbHelper.loginUser(email, password);
     const userLogInData = await dbHelper.getUserByEmail(email);
-    console.log(
-      "youser logingdata",
-      userLogInData,
-      Object.keys(userLogInData).length
-    );
+    console.log("youser logingdata", userLogin, Object.keys(userLogin).length);
 
-    if (Object.keys(userLogInData).length < 5) {
+    if (Object.keys(userLogin).length < 5) {
       return response.status(401).json({
         message: "Authentication failed"
       });
     }
-    return response.status(201).json(userLogInData);
+
+    var returnedData = { token: userLogin, userData: userLogInData };
+    return response.status(201).json(returnedData);
   } catch (error) {
     console.log(error);
     return response.status(403).json({

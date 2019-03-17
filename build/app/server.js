@@ -7,6 +7,7 @@ var express_1 = __importDefault(require("express"));
 var body_parser_1 = __importDefault(require("body-parser"));
 // import jwt from "jsonwebtoken";
 // import exjwt from "express-jwt";
+// import { managerController } from './controllers/user.controller.1';
 var secret = process.env.SECRET;
 var cors = require("cors");
 var controllers_1 = require("./controllers");
@@ -25,8 +26,8 @@ app.use(body_parser_1.default.json());
 app.use("/user", controllers_1.userController);
 app.use("/task", controllers_1.taskController);
 app.use("/usertask", controllers_1.usertaskController);
-app.use("/feedback", controllers_1.feedbackController);
 app.use("/event", controllers_1.eventController);
+app.use("/manager", controllers_1.managerController);
 app.listen(port, function () {
     console.log("Listening at http://localhost:" + port + "/");
 });

@@ -1,5 +1,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+in the parent folder run
+
+nodemon build/server/server.js
+
+in another tab in the parent folder
+
+npm run tsc -- --watch
+
+in the public my-app folder run
+npm start
+
 ## Available Scripts
 
 In the project directory, you can run:

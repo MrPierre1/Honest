@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-const dbHelper = require("./controllerHelpers/taskQueries");
+const dbHelper = require("./taskQueries");
 const router: Router = Router();
 
 interface TaskData {

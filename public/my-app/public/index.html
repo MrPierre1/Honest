@@ -39,7 +39,7 @@
       };
       document.addEventListener("DOMContentLoaded", function() {
         var elemsx = document.querySelectorAll(".sidenav");
-        var instances1 = M.Sidenav.init(elemsx);
+        M.Sidenav.init(elemsx);
         var elemsy = document.querySelectorAll(".fixed-action-btn");
         var instances2 = M.FloatingActionButton.init(elemsy, options);
         // var modalElems = document.querySelectorAll(".modal");
@@ -49,6 +49,8 @@
         // var instances4 = M.Dropdown.init(elemsdp);
         // var elemsselect = document.querySelectorAll("select");
         // var instances5 = M.FormSelect.init(elemsselect);
+        var elem = document.querySelector(".sidenav");
+        var instance = M.Sidenav.init(elem);
       });
     </script>
   </body>

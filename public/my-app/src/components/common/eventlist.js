@@ -1,59 +1,66 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable no-unused-expressions */
-import axios from "axios";
-import React, { Component } from "react";
+import axios from 'axios'
+import React, { Component } from 'react'
 
 class EventsList extends Component {
-  state = {
-    events: [],
-    dataevents: [],
-    isAuthenticated: "",
-  };
 
-  componentWillMount() {
-    var token = localStorage.getItem("token");
-    if (!token) {
-      console.log("there was no token");
-      this.props.history.push("/");
-    } else {
-      this.setState({
-        isAuthenticated: true,
-      });
+  constructor (props) {
+    super(props)
+    this.state = {
+      events: [],
+      dataevents: [],
+      isAuthenticated: ''
     }
   }
-  componentDidMount() {
-    // const events = axios("http://localhost:3000/user/all");
-    // console.log("events, should ho here");
+
+
+  componentWillMount () {
+    var token = localStorage.getItem('token')
+    if (!token) {
+      console.log('there was no token')
+      this.props.history.push('/')
+    } else {
+      this.setState({
+        isAuthenticated: true
+      })
+    }
+  }
+  componentDidMount () {
+    // const events = axios("http://localhost:3000/user/all")
+    // console.log("events, should ho here")
     axios
-      .get("http://localhost:3000/user/all")
+      .get('http://localhost:3000/user/all')
       .then(response => {
-        // let currentComponent = this;
+        // let currentComponent = this
         // handle success
-        // console.log(response);
+        // console.log(response)
         // var data = response
         // this.setState({events: response})
         this.setState({
           events: response.data,
-          dataevents: response,
-        });
-        // console.log("data its the data", response.data);
+          dataevents: response
+        })
+      // console.log("data its the data", response.data)
       })
       .catch(error => {
         // handle error
-        console.log(error);
-      });
+        console.log(error)
+      })
   }
-  render() {
+  render () {
     const userD = this.state.events.map(data => (
       <li key={data.user_id} value={data.name}>
         {data.user_id}
         <br />
         {data.name}
       </li>
-    ));
+    ))
 
-    return <div>{userD}</div>;
+    return <div>
+             {userD}
+           </div>
   }
 }
 
-export default EventsList;
+export default EventsList

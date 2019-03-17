@@ -2,15 +2,16 @@ import express from "express";
 import bodyParser from "body-parser";
 // import jwt from "jsonwebtoken";
 // import exjwt from "express-jwt";
+// import { managerController } from './controllers/user.controller.1';
 const secret = process.env.SECRET;
 var cors = require("cors");
 
 import {
   userController,
   taskController,
-  feedbackController,
   eventController,
-  usertaskController
+  usertaskController,
+  managerController
 } from "./controllers";
 
 // const jwtMW = exjwt({
@@ -33,8 +34,8 @@ app.use(bodyParser.json());
 app.use("/user", userController);
 app.use("/task", taskController);
 app.use("/usertask", usertaskController);
-app.use("/feedback", feedbackController);
 app.use("/event", eventController);
+app.use("/manager", managerController);
 
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/`);

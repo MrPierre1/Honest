@@ -78,6 +78,7 @@ CREATE TABLE public.users
     name character varying(128) COLLATE pg_catalog."default" NOT NULL,
     password character varying(250) COLLATE pg_catalog."default" NOT NULL,
     photo character varying(128) COLLATE pg_catalog."default" NOT NULL,
+    manager: boolean,
     created_date timestamp without time zone,
     modified_date timestamp without time zone,
     CONSTRAINT users_pkey PRIMARY KEY (user_id),
@@ -128,5 +129,19 @@ CREATE TABLE public.user_task
     PRIMARY KEY (user_id, event_id)
 );
 
+
+CREATE TABLE public.managers
+(
+    manager_id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
+    email character varying(128) COLLATE pg_catalog."default" NOT NULL,
+    name character varying(128) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(250) COLLATE pg_catalog."default" NOT NULL,
+    reports integer[] NOT NULL,
+    created_date timestamp without time zone,
+    modified_date timestamp without time zone,
+        PRIMARY KEY manager_id
+    CONSTRAINT fk_reports_id REFERENCES users (user_id)
+   
+)
 
 */

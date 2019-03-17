@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-const dbHelper = require("./controllerHelpers/eventQueries");
+const dbHelper = require("./eventQueries");
 const router: Router = Router();
 
 interface EventData {
