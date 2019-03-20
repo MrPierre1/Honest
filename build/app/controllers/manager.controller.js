@@ -72,36 +72,36 @@ router.post("/", function (request, response) { return __awaiter(_this, void 0, 
             case 2:
                 createDirectReport = _b.sent();
                 console.log("youser logingdata", createDirectReport.rows[0]);
-                if (createDirectReport.rows[0].manager_id) {
-                    console.log("I saw the managerID");
-                    // var transporter = nodeMailer.createTransport({
-                    //   service: "gmail",
-                    //   host: "smtp.gmail.com",
-                    //   port: 465,
-                    //   secure: true,
-                    //   auth: {
-                    //     user: process.env.USER,
-                    //     pass: process.env.PASSWORD
-                    //   }
-                    // });
-                    // var mailOptions = {
-                    //   from: "youremail@gmail.com",
-                    //   to: "myfriend@yahoo.com",
-                    //   subject: "Sending Email using Node.js",
-                    //   text: "That was easy!"
-                    // };
-                    // transporter.sendMail(mailOptions, function(error, info) {
-                    //   if (error) {
-                    //     console.log(error);
-                    //   } else {
-                    //     console.log("Email sent: " + info.response);
-                    //   }
-                    // });
-                }
+                // if (createDirectReport.rows[0].manager_id) {
+                //   console.log("I saw the managerID");
+                //   // var transporter = nodeMailer.createTransport({
+                //   //   service: "gmail",
+                //   //   host: "smtp.gmail.com",
+                //   //   port: 465,
+                //   //   secure: true,
+                //   //   auth: {
+                //   //     user: process.env.USER,
+                //   //     pass: process.env.PASSWORD
+                //   //   }
+                //   // });
+                //   // var mailOptions = {
+                //   //   from: "youremail@gmail.com",
+                //   //   to: "myfriend@yahoo.com",
+                //   //   subject: "Sending Email using Node.js",
+                //   //   text: "That was easy!"
+                //   // };
+                //   // transporter.sendMail(mailOptions, function(error, info) {
+                //   //   if (error) {
+                //   //     console.log(error);
+                //   //   } else {
+                //   //     console.log("Email sent: " + info.response);
+                //   //   }
+                //   // });
+                // }
                 return [2 /*return*/, response.status(201).json(createDirectReport)];
             case 3:
                 error_1 = _b.sent();
-                console.log(error_1);
+                console.log("error from manager router", error_1);
                 return [2 /*return*/, response.status(403).json({
                         message: " failed",
                         error: error_1

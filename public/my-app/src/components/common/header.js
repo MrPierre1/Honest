@@ -37,13 +37,22 @@ class Header extends Component {
   render () {
     const isAuthenticated = this.state.isAuthenticated
     console.log('isuathenticated', isAuthenticated)
+    const logoStyle = {
+      color: 'white',
+      fontFamily: 'Snell Roundhand, cursive',
+      fontWeight: 900,
+      fontSize: 70,
+      margin: 'auto'
+    }
+
     return (
+
       <div className='App'>
         {isAuthenticated ? (
            <div>
              <nav>
                <div className='nav-wrapper'>
-                 <Link to='/home' className='brand-logo left'> One On One
+                 <Link to='/home' className='brand-logo left' style={logoStyle}> Honest
                  </Link>
                  <a href='#!' data-target='mobile-demo' className='sidenav-trigger'><i className='material-icons'>menu</i></a>
                  <ul className='left hide-on-med-and-down' style={{ width: '30%'}}>
@@ -90,8 +99,7 @@ class Header extends Component {
            ) : (
            <nav>
              <div className='nav-wrapper'>
-               <Link to='/' className='brand-logo left'>
-               {" "} One On One
+               <Link to='/' className='brand-logo left' style={logoStyle}> Honest
                </Link>
                <a href='home' data-target='mobile-demo' className='sidenav-trigger'><i className='material-icons'>menu</i></a>
                <ul className='left hide-on-med-and-down'>

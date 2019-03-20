@@ -31,39 +31,39 @@ router.post("/", async (request: Request, response: Response) => {
 
     console.log("youser logingdata", createDirectReport.rows[0]);
 
-    if (createDirectReport.rows[0].manager_id) {
-      console.log("I saw the managerID");
+    // if (createDirectReport.rows[0].manager_id) {
+    //   console.log("I saw the managerID");
 
-      // var transporter = nodeMailer.createTransport({
-      //   service: "gmail",
-      //   host: "smtp.gmail.com",
-      //   port: 465,
-      //   secure: true,
-      //   auth: {
-      //     user: process.env.USER,
-      //     pass: process.env.PASSWORD
-      //   }
-      // });
+    //   // var transporter = nodeMailer.createTransport({
+    //   //   service: "gmail",
+    //   //   host: "smtp.gmail.com",
+    //   //   port: 465,
+    //   //   secure: true,
+    //   //   auth: {
+    //   //     user: process.env.USER,
+    //   //     pass: process.env.PASSWORD
+    //   //   }
+    //   // });
 
-      // var mailOptions = {
-      //   from: "youremail@gmail.com",
-      //   to: "myfriend@yahoo.com",
-      //   subject: "Sending Email using Node.js",
-      //   text: "That was easy!"
-      // };
+    //   // var mailOptions = {
+    //   //   from: "youremail@gmail.com",
+    //   //   to: "myfriend@yahoo.com",
+    //   //   subject: "Sending Email using Node.js",
+    //   //   text: "That was easy!"
+    //   // };
 
-      // transporter.sendMail(mailOptions, function(error, info) {
-      //   if (error) {
-      //     console.log(error);
-      //   } else {
-      //     console.log("Email sent: " + info.response);
-      //   }
-      // });
-    }
+    //   // transporter.sendMail(mailOptions, function(error, info) {
+    //   //   if (error) {
+    //   //     console.log(error);
+    //   //   } else {
+    //   //     console.log("Email sent: " + info.response);
+    //   //   }
+    //   // });
+    // }
     return response.status(201).json(createDirectReport);
     // .json({ user: user, message: "youre associates" });
   } catch (error) {
-    console.log(error);
+    console.log("error from manager router", error);
     return response.status(403).json({
       message: " failed",
       error: error

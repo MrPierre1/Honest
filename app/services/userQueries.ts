@@ -48,17 +48,22 @@ const createUser = async (
   name: string,
   email: string,
   password: string,
-  photo: string
+  photo: string,
+  manager: boolean
 ) => {
   try {
     const hashPass = await bcrypt.hash(password, salt);
     const user = await pool.query(
-      "INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning user_id, name, email, photo",
-      [name, email, hashPass, photo]
+      "INSERT INTO users (name, email, password, photo, manager) VALUES ($1, $2, $3, $4, $5) returning user_id, name, email",
+      [name, email, hashPass, photo, manager]
     );
-    const token = await jwt.sign({ name, email, password, photo }, secret, {
-      expiresIn: 129600
-    });
+    const token = await jwt.sign(
+      { name, email, password, photo, manager },
+      secret,
+      {
+        expiresIn: 129600
+      }
+    );
 
     return { userdata: user.rows, token };
   } catch (error) {

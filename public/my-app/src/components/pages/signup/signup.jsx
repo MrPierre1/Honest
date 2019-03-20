@@ -12,7 +12,7 @@ class SignUpForm extends Component {
       email: "",
       name: "",
       password: "",
-      manager: "",
+      manager: false,
       file: ""
     };
     this.handleChange = this.handleChange.bind(this);
@@ -36,7 +36,8 @@ class SignUpForm extends Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
-      file: this.state.file
+      file: this.state.file,
+      manager: this.state.manager
     };
     console.log("sending data to parent", userData, this.state.name);
 
@@ -45,6 +46,8 @@ class SignUpForm extends Component {
     formInfo.append("email", userData.email);
     formInfo.append("password", userData.password);
     formInfo.append("file", userData.file);
+    formInfo.append("manager", userData.manager);
+
     axios({
       method: "post",
       url: "http://localhost:3000/user/signup",
@@ -65,6 +68,9 @@ class SignUpForm extends Component {
   }
 
   componentDidMount() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     var elemsg = document.querySelectorAll("select");
     M.FormSelect.init(elemsg);
   }
@@ -118,18 +124,6 @@ class SignUpForm extends Component {
               onChange={this.handleChange}
               value={this.state.password}
             />
-
-            <div className="input-field col s12">
-              <select onChange={this.handleChange}>
-                <option value="" disabled>
-                  Choose your option
-                </option>
-                <option value="1">Option 1</option>
-                <option value="2">Option 2</option>
-                <option value="3">Option 3</option>
-              </select>
-              <label>Select Your Manager</label>
-            </div>
             <div className="file-field input-field">
               <div className="btn">
                 <span>File</span>

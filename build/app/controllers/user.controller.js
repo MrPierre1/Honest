@@ -51,10 +51,42 @@ var upload = multer({ dest: "" + UPLOAD_PATH });
 var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 var exjwt = require("express-jwt");
+var nodeMailer = require("nodemailer");
+var sendmail = require("sendmail")();
 var secret = process.env.SECRET || "thesecretkey";
 var jwtMW = exjwt({
     secret: secret
 });
+// var sendEmail = () => {
+//   sendmail(
+//     {
+//       from: "nneal@friendshipchristian.net",
+//       to: "jpieree1fchd@gmail.com",
+//       subject: `test sendmail ${Date.now()}`,
+//       html: `
+//       <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !important;" width="100%">
+//         <tr>
+//           <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;" valign="top">
+//             <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+//               <tr>
+//                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;" valign="top" bgcolor="#3498db" align="center">
+//                 <a href="http://localhost:3001/signup" class="btn btn-primary">Click Here To Create An Account</a>
+//                  </td>
+//               </tr>
+//             </table>
+//           </td>
+//         </tr>
+//       </table>
+//       `
+//     },
+//     function(err, reply) {
+//       if (err) {
+//         console.log("error from sending email", err);
+//       }
+//       // console.dir(reply);
+//     }
+//   );
+// };
 router.get("/", function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         res.status(201).send("re now in the user controller!");
@@ -140,12 +172,11 @@ router.put("/", jwtMW, function (request, response) { return __awaiter(_this, vo
     });
 }); });
 router.post("/signup", upload.single("file"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name, email, password, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, req, error_4;
+    var _a, name, email, password, manager, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                console.log("redbod", request.body);
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
+                _a = request.body, name = _a.name, email = _a.email, password = _a.password, manager = _a.manager;
                 // if (!helpers.checkValues(name, email, password)) {
                 if (!name || !email || !password) {
                     return [2 /*return*/, response
@@ -167,7 +198,7 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                             .json({ message: "Please attach a file to the call" })];
                 }
                 else {
-                    console.log("file received", request.file);
+                    console.log(process.env.USER, "file received", request.file);
                     imagePath = request.file.path;
                     targetPath = UPLOAD_PATH;
                     originalImageName = request.file.originalname;
@@ -176,25 +207,29 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 4, , 5]);
-                return [4 /*yield*/, userQueries_1.default.createUser(name, email, password, request.file.filename)];
+                console.log("Im getting ready to add a user");
+                return [4 /*yield*/, userQueries_1.default.createUser(name, email, password, manager, request.file.filename)];
             case 3:
                 user = _b.sent();
-                console.log(user, "user was added", user.userdata[0]);
-                if (user.userdata[0].user_id) {
-                    req = requestCall.post("http://localhost:3000/manager/", {
+                console.log(user, "user was added");
+                //create a function for this and pass in the number of diurec reports so it can iterate thorugh the number o fusers and add it to the db
+                if (manager) {
+                    helpers.sendEmail();
+                    requestCall.post("http://localhost:3000/manager/", {
                         json: {
-                            manager_id: 1,
+                            manager_id: user.userdata[0].user_id,
                             direct_reports: 90
                         }
+                    }, function (err, httpResponse, body) {
+                        console.log("error", err);
                     });
-                    console.log("redddddqqqq", req);
+                    // console.log("redddddqqqq", req);
                 }
                 return [2 /*return*/, response.status(201).send({ user: user })];
             case 4:
                 error_4 = _b.sent();
-                return [2 /*return*/, response
-                        .status(401)
-                        .json({ err: error_4, message: "please provide a valid userID" })];
+                console.log("server Error: ", error_4);
+                return [2 /*return*/, response.status(401).json({ err: error_4 })];
             case 5: return [2 /*return*/];
         }
     });

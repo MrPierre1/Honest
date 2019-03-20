@@ -99,7 +99,7 @@ var getUserByEmail = function (email) { return __awaiter(_this, void 0, void 0, 
         }
     });
 }); };
-var createUser = function (name, email, password, photo) { return __awaiter(_this, void 0, void 0, function () {
+var createUser = function (name, email, password, photo, manager) { return __awaiter(_this, void 0, void 0, function () {
     var hashPass, user, token, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -108,10 +108,10 @@ var createUser = function (name, email, password, photo) { return __awaiter(_thi
                 return [4 /*yield*/, bcrypt.hash(password, salt)];
             case 1:
                 hashPass = _a.sent();
-                return [4 /*yield*/, pool.query("INSERT INTO users (name, email, password, photo) VALUES ($1, $2, $3, $4) returning user_id, name, email, photo", [name, email, hashPass, photo])];
+                return [4 /*yield*/, pool.query("INSERT INTO users (name, email, password, photo, manager) VALUES ($1, $2, $3, $4, $5) returning user_id, name, email", [name, email, hashPass, photo, manager])];
             case 2:
                 user = _a.sent();
-                return [4 /*yield*/, jwt.sign({ name: name, email: email, password: password, photo: photo }, secret, {
+                return [4 /*yield*/, jwt.sign({ name: name, email: email, password: password, photo: photo, manager: manager }, secret, {
                         expiresIn: 129600
                     })];
             case 3:

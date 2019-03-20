@@ -12,7 +12,7 @@ class ManagerSignUpForm extends Component {
       email: "",
       name: "",
       password: "",
-      manager: "",
+      manager: true,
       user: "",
       result: [],
       obj: [],
@@ -43,7 +43,8 @@ class ManagerSignUpForm extends Component {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
-      file: this.state.file
+      file: this.state.file,
+      manager: this.state.manager
     };
 
     var elems12 = document.querySelectorAll(".chips");
@@ -64,6 +65,7 @@ class ManagerSignUpForm extends Component {
       formInfo.append("email", userData.email);
       formInfo.append("password", userData.password);
       formInfo.append("file", userData.file);
+      formInfo.append("manager", userData.manager);
 
       const loginUser = await axios({
         method: "post",

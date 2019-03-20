@@ -7,6 +7,7 @@ export interface UserData {
   photo: string;
   id: number;
   token?: string;
+  manager?: boolean;
 }
 
 export interface UserParamsData {

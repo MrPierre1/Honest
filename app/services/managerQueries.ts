@@ -11,7 +11,7 @@ const results = (queryResult: any) => {
     ? Error("Your query did not produce any valid results")
     : queryResult.rows[0];
 };
-const createReports = async (manager_id: number, direct_reports: [number]) => {
+const createReports = async (manager_id: number, direct_reports: number) => {
   try {
     console.log("manager queries, ", manager_id, direct_reports);
     const dr = await pool.query(

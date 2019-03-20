@@ -10,12 +10,46 @@ const upload = multer({ dest: `${UPLOAD_PATH}` });
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const exjwt = require("express-jwt");
+var nodeMailer = require("nodemailer");
+const sendmail = require("sendmail")();
 const secret = process.env.SECRET || "thesecretkey";
 import { UserDataRequest, UserParamsRequest, UserData } from "./interfaces";
 
 const jwtMW = exjwt({
   secret
 });
+
+// var sendEmail = () => {
+//   sendmail(
+//     {
+//       from: "nneal@friendshipchristian.net",
+//       to: "jpieree1fchd@gmail.com",
+//       subject: `test sendmail ${Date.now()}`,
+//       html: `
+//       <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !important;" width="100%">
+//         <tr>
+//           <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;" valign="top">
+//             <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+//               <tr>
+//                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;" valign="top" bgcolor="#3498db" align="center">
+//                 <a href="http://localhost:3001/signup" class="btn btn-primary">Click Here To Create An Account</a>
+//                  </td>
+//               </tr>
+//             </table>
+//           </td>
+//         </tr>
+//       </table>
+//       `
+//     },
+//     function(err, reply) {
+//       if (err) {
+//         console.log("error from sending email", err);
+//       }
+
+//       // console.dir(reply);
+//     }
+//   );
+// };
 
 router.get("/", async (req: Request, res: Response) => {
   res.status(201).send("re now in the user controller!");
@@ -77,8 +111,10 @@ router.post(
   "/signup",
   upload.single("file"),
   async (request: Request, response: Response) => {
-    console.log("redbod", request.body);
-    const { name, email, password } = request.body;
+    // console.log("redbod", request.body);
+
+    const { name, email, password, manager } = request.body;
+
     // if (!helpers.checkValues(name, email, password)) {
     if (!name || !email || !password) {
       return response
@@ -99,7 +135,7 @@ router.post(
         .status(402)
         .json({ message: `Please attach a file to the call` });
     } else {
-      console.log("file received", request.file);
+      console.log(process.env.USER, "file received", request.file);
       const imagePath = request.file.path;
       const targetPath = UPLOAD_PATH;
       const originalImageName = request.file.originalname;
@@ -113,30 +149,39 @@ router.post(
     }
 
     try {
+      console.log("Im getting ready to add a user");
       // const photo = UPLOAD_PATH + email + "/" + request.file.originalname;
       const user = await dbHelper.createUser(
         name,
         email,
         password,
+        manager,
         request.file.filename
       );
-      console.log(user, "user was added", user.userdata[0]);
+      console.log(user, "user was added");
 
-      if (user.userdata[0].user_id) {
-        var req = requestCall.post("http://localhost:3000/manager/", {
-          json: {
-            manager_id: 1,
-            direct_reports: 90
+      //create a function for this and pass in the number of diurec reports so it can iterate thorugh the number o fusers and add it to the db
+      if (manager) {
+        helpers.sendEmail();
+        requestCall.post(
+          "http://localhost:3000/manager/",
+          {
+            json: {
+              manager_id: user.userdata[0].user_id,
+              direct_reports: 90
+            }
+          },
+          function(err, httpResponse, body) {
+            console.log("error", err);
           }
-        });
-        console.log("redddddqqqq", req);
+        );
+        // console.log("redddddqqqq", req);
       }
 
       return response.status(201).send({ user });
     } catch (error) {
-      return response
-        .status(401)
-        .json({ err: error, message: "please provide a valid userID" });
+      console.log("server Error: ", error);
+      return response.status(401).json({ err: error });
     }
   }
 );

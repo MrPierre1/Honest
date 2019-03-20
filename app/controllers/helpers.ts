@@ -1,37 +1,56 @@
 var fs = require("fs");
 
+const sendmail = require("sendmail")();
+
+const sendEmail = async () => {
+  try {
+    const resultFromSentEmail = sendmail(
+      {
+        from: "nneal@friendshipchristian.net",
+        to: "jpieree1fchd@gmail.com",
+        subject: `test sendmail ${Date.now()}`,
+        html: `
+      <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !important;" width="100%">
+        <tr>
+          <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;" valign="top">
+            <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+              <tr>
+                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;" valign="top" bgcolor="#3498db" align="center"> 
+                <a href="http://localhost:3001/signup" class="btn btn-primary">Click Here To Create An Account</a>
+                 </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      `
+      }
+      // ,
+      // function(err, reply) {
+      //   if (err) {
+      //     console.log("error from sending email", err);
+      //   }
+
+      //   // console.dir(reply);
+      // }
+    );
+    // const dbData = Object.assign({}, oneUserData[0]);
+    return resultFromSentEmail;
+  } catch (error) {
+    console.log("errof from sending email", error);
+    return error;
+  }
+};
+
 const imageUpload = function(
   imagePath: string,
   targetPath: string,
   originalFileName: string,
   email: string
 ) {
-  // var tmp_path = request.file.path;
-
-  // /** The original name of the uploaded file
-  //     stored in the variable "originalname". **/
-  // var target_path = "uploads/" + request.file.originalname;
-
-  // var src = fs.createReadStream(tmp_path);
-  // var dest = fs.createWriteStream(target_path);
-
   console.log(imagePath, targetPath, originalFileName);
-
-  //   var target_path = targetPath + originalFileName;
-  //   const target_path =
   fs.mkdirSync(targetPath + email + "/");
-
-  //   var src = fs.createReadStream(targetPath + email + "/");
   var dest = fs.createWriteStream(targetPath + email + "/" + originalFileName);
-  // src.pipe(dest);
-  //   src.on("end", function() {
-  //     console.log("image saved");
-  //     return { message: "image uploaded" };
-  //   });
-  //   src.on("error", function(err) {
-  //     console.log("image errpr.", err);
-  //     return { message: "image failed ot upload", error: err };
-  //   });
 };
 
 const checkValues = (value1: any, value2: any, value3: any) => {
@@ -42,5 +61,6 @@ const checkValues = (value1: any, value2: any, value3: any) => {
 };
 module.exports = {
   imageUpload,
-  checkValues
+  checkValues,
+  sendEmail
 };
