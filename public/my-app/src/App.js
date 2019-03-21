@@ -89,6 +89,7 @@ class App extends Component {
         <div>
           <Header />
           <Route path="/" exact component={Root} />
+          <Route path="/root" exact component={Root} />
           <Route path="/home" component={Home} isAuthenticated={false} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUpForm} />

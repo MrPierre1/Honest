@@ -63,6 +63,7 @@ router.post("/", function (request, response) { return __awaiter(_this, void 0, 
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                console.log("body data", request.body);
                 _a = request.body, manager_id = _a.manager_id, direct_reports = _a.direct_reports;
                 console.log("calling manager router, ", manager_id, direct_reports);
                 _b.label = 1;
@@ -71,7 +72,7 @@ router.post("/", function (request, response) { return __awaiter(_this, void 0, 
                 return [4 /*yield*/, managerQueries_1.default.createReports(manager_id, direct_reports)];
             case 2:
                 createDirectReport = _b.sent();
-                console.log("youser logingdata", createDirectReport.rows[0]);
+                console.log("youser logingdata", createDirectReport);
                 // if (createDirectReport.rows[0].manager_id) {
                 //   console.log("I saw the managerID");
                 //   // var transporter = nodeMailer.createTransport({

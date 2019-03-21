@@ -59,7 +59,12 @@ class SignUpForm extends Component {
         if (response.status === 201) {
           localStorage.setItem("token", JSON.stringify(response.data));
           this.setState({ isAuthenticated: true });
-          this.props.history.push("/home");
+          // console.log('manager is here', this.state.manager)
+          // this.props.history.push("/home");
+          this.props.history.push({
+            pathname: "/home",
+            state: { manager: this.state.manager }
+          });
         }
       })
       .catch(error => {

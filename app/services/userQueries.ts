@@ -15,7 +15,7 @@ const results = (queryResult: any) => {
 const getUserById = async (user_id: number): Promise<UserData> => {
   try {
     const res = await pool.query(
-      `SELECT * FROM users WHERE user_id = ${user_id}`
+      `SELECT user_id, email, name, manager FROM users WHERE user_id = ${user_id}`
     );
     console.log("res", res);
     return results(res);
@@ -54,7 +54,7 @@ const createUser = async (
   try {
     const hashPass = await bcrypt.hash(password, salt);
     const user = await pool.query(
-      "INSERT INTO users (name, email, password, photo, manager) VALUES ($1, $2, $3, $4, $5) returning user_id, name, email",
+      "INSERT INTO users (name, email, password, photo, manager) VALUES ($1, $2, $3, $4, $5) returning user_id, name, email, manager",
       [name, email, hashPass, photo, manager]
     );
     const token = await jwt.sign(
@@ -74,6 +74,7 @@ const createUser = async (
 const loginUser = async (email: string, password: string) => {
   try {
     const userInfo = await getUserByEmail(email);
+    // console.log("I know the user ID: ", userInfo);
     const hashedPassword = userInfo.password;
 
     const match = await bcrypt.compare(password, hashedPassword);
@@ -81,9 +82,10 @@ const loginUser = async (email: string, password: string) => {
       const token = await jwt.sign({ email, password }, secret, {
         expiresIn: 129600
       });
-      return token;
+      return { token, user_id: userInfo.user_id };
     }
   } catch (error) {
+    console.log("I couldnot log the user in", error);
     return error;
   }
 };

@@ -53,7 +53,7 @@ var getUserById = function (user_id) { return __awaiter(_this, void 0, void 0, f
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, pool.query("SELECT * FROM users WHERE user_id = " + user_id)];
+                return [4 /*yield*/, pool.query("SELECT user_id, email, name, manager FROM users WHERE user_id = " + user_id)];
             case 1:
                 res = _a.sent();
                 console.log("res", res);
@@ -108,7 +108,7 @@ var createUser = function (name, email, password, photo, manager) { return __awa
                 return [4 /*yield*/, bcrypt.hash(password, salt)];
             case 1:
                 hashPass = _a.sent();
-                return [4 /*yield*/, pool.query("INSERT INTO users (name, email, password, photo, manager) VALUES ($1, $2, $3, $4, $5) returning user_id, name, email", [name, email, hashPass, photo, manager])];
+                return [4 /*yield*/, pool.query("INSERT INTO users (name, email, password, photo, manager) VALUES ($1, $2, $3, $4, $5) returning user_id, name, email, manager", [name, email, hashPass, photo, manager])];
             case 2:
                 user = _a.sent();
                 return [4 /*yield*/, jwt.sign({ name: name, email: email, password: password, photo: photo, manager: manager }, secret, {
@@ -143,10 +143,11 @@ var loginUser = function (email, password) { return __awaiter(_this, void 0, voi
                     })];
             case 3:
                 token = _a.sent();
-                return [2 /*return*/, token];
+                return [2 /*return*/, { token: token, user_id: userInfo.user_id }];
             case 4: return [3 /*break*/, 6];
             case 5:
                 error_5 = _a.sent();
+                console.log("I couldnot log the user in", error_5);
                 return [2 /*return*/, error_5];
             case 6: return [2 /*return*/];
         }

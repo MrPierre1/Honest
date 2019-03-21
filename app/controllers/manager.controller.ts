@@ -21,6 +21,7 @@ const jwtMW = exjwt({
   secret
 });
 router.post("/", async (request: Request, response: Response) => {
+  console.log("body data", request.body);
   const { manager_id, direct_reports } = request.body;
   console.log("calling manager router, ", manager_id, direct_reports);
   try {
@@ -29,7 +30,7 @@ router.post("/", async (request: Request, response: Response) => {
       direct_reports
     );
 
-    console.log("youser logingdata", createDirectReport.rows[0]);
+    console.log("youser logingdata", createDirectReport);
 
     // if (createDirectReport.rows[0].manager_id) {
     //   console.log("I saw the managerID");

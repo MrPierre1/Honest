@@ -1,6 +1,24 @@
 var fs = require("fs");
 
 const sendmail = require("sendmail")();
+const requestCall = require("request");
+
+const createDirectReports = (manager_id, direct_reports) => {
+  console.log("data from helper", manager_id, direct_reports);
+
+  requestCall.post(
+    "http://localhost:3000/manager/",
+    {
+      json: {
+        manager_id,
+        direct_reports
+      }
+    },
+    function(err, httpResponse, body) {
+      console.log("error  from helper for manager", err);
+    }
+  );
+};
 
 const sendEmail = async () => {
   try {
@@ -62,5 +80,6 @@ const checkValues = (value1: any, value2: any, value3: any) => {
 module.exports = {
   imageUpload,
   checkValues,
-  sendEmail
+  sendEmail,
+  createDirectReports
 };

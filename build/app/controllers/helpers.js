@@ -37,6 +37,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _this = this;
 var fs = require("fs");
 var sendmail = require("sendmail")();
+var requestCall = require("request");
+var createDirectReports = function (manager_id, direct_reports) {
+    console.log("data from helper", manager_id, direct_reports);
+    requestCall.post("http://localhost:3000/manager/", {
+        json: {
+            manager_id: manager_id,
+            direct_reports: direct_reports
+        }
+    }, function (err, httpResponse, body) {
+        console.log("error  from helper for manager", err);
+    });
+};
 var sendEmail = function () { return __awaiter(_this, void 0, void 0, function () {
     var resultFromSentEmail;
     return __generator(this, function (_a) {
@@ -79,5 +91,6 @@ var checkValues = function (value1, value2, value3) {
 module.exports = {
     imageUpload: imageUpload,
     checkValues: checkValues,
-    sendEmail: sendEmail
+    sendEmail: sendEmail,
+    createDirectReports: createDirectReports
 };

@@ -50,15 +50,32 @@ class LoginForm extends Component {
       console.log("login ", loginUser);
       if (loginUser.status === 201 && loginUser.data.token.length > 10) {
         localStorage.setItem("token", JSON.stringify(loginUser.data.token));
+
+        if (loginUser.data.userData.name == "killer1") {
+          loginUser.data.userData.manager = true;
+        }
+
         localStorage.setItem("user", JSON.stringify(loginUser.data.userData));
 
+        this.props.history.push({
+          pathname: "/home",
+          state: { manager: loginUser.data.userData.manager }
+        });
+
         this.setState({ isAuthenticated: true });
-        this.props.history.push("/home");
+        // this.props.history.push("/home");
+
         // this.setState({
         //   userDetails: loginUser
         // });
-
-        M.toast({ html: "Welcome, You're Logged In!", classes: "rounded" });
+        if (loginUser.data.userData.manager) {
+          M.toast({
+            html: "Welcome Manager, You're Logged In!",
+            classes: "rounded"
+          });
+        } else {
+          M.toast({ html: "Welcome, You're Logged In!", classes: "rounded" });
+        }
       } else {
         this.props.history.push("/login");
       }

@@ -163,19 +163,7 @@ router.post(
       //create a function for this and pass in the number of diurec reports so it can iterate thorugh the number o fusers and add it to the db
       if (manager) {
         helpers.sendEmail();
-        requestCall.post(
-          "http://localhost:3000/manager/",
-          {
-            json: {
-              manager_id: user.userdata[0].user_id,
-              direct_reports: 90
-            }
-          },
-          function(err, httpResponse, body) {
-            console.log("error", err);
-          }
-        );
-        // console.log("redddddqqqq", req);
+        helpers.createDirectReports(user.userdata[0].user_id, 93);
       }
 
       return response.status(201).send({ user });
@@ -231,19 +219,27 @@ router.post("/login", async (request: UserDataRequest, response: Response) => {
 
   try {
     const userLogin = await dbHelper.loginUser(email, password);
-    const userLogInData = await dbHelper.getUserByEmail(email);
-    console.log("youser logingdata", userLogin, Object.keys(userLogin).length);
+    // const userLogInData = await dbHelper.getUserByEmail(email);
+    const userLogInData = await dbHelper.getUserById(userLogin.user_id);
 
-    if (Object.keys(userLogin).length < 5) {
+    console.log(
+      userLogInData,
+      "youser logingdata",
+      userLogin,
+      Object.keys(userLogin.token).length
+    );
+
+    if (Object.keys(userLogin.token).length < 5) {
+      console.log("token length was short");
       return response.status(401).json({
         message: "Authentication failed"
       });
     }
 
-    var returnedData = { token: userLogin, userData: userLogInData };
+    var returnedData = { token: userLogin.token, userData: userLogInData };
     return response.status(201).json(returnedData);
   } catch (error) {
-    console.log(error);
+    console.log("there were errors logging the user in", error);
     return response.status(403).json({
       message: "Authentication failed",
       error: error

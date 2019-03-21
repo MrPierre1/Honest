@@ -13,7 +13,8 @@ class ManagerSignUpForm extends Component {
       name: "",
       password: "",
       manager: true,
-      user: "",
+      user: [],
+      users: [],
       result: [],
       obj: [],
       userEmails: [],
@@ -85,7 +86,13 @@ class ManagerSignUpForm extends Component {
         );
 
         this.setState({ isAuthenticated: true });
-        this.props.history.push("/home");
+
+        this.props.history.push({
+          pathname: "/home",
+          state: { manager: this.state.manager }
+        });
+
+        // this.props.history.push("/home");
         this.setState({
           userDetails: loginUser
         });
@@ -117,7 +124,7 @@ class ManagerSignUpForm extends Component {
     }
 
     var users = this.state.user.map(user => user.email);
-    this.setState(users);
+    this.setState({ users });
     Object.keys(users)
       .filter(users.hasOwnProperty.bind(users))
       .reduce((obj, key) => {

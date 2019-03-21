@@ -215,15 +215,7 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                 //create a function for this and pass in the number of diurec reports so it can iterate thorugh the number o fusers and add it to the db
                 if (manager) {
                     helpers.sendEmail();
-                    requestCall.post("http://localhost:3000/manager/", {
-                        json: {
-                            manager_id: user.userdata[0].user_id,
-                            direct_reports: 90
-                        }
-                    }, function (err, httpResponse, body) {
-                        console.log("error", err);
-                    });
-                    // console.log("redddddqqqq", req);
+                    helpers.createDirectReports(user.userdata[0].user_id, 93);
                 }
                 return [2 /*return*/, response.status(201).send({ user: user })];
             case 4:
@@ -290,20 +282,21 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
                 return [4 /*yield*/, userQueries_1.default.loginUser(email, password)];
             case 2:
                 userLogin = _b.sent();
-                return [4 /*yield*/, userQueries_1.default.getUserByEmail(email)];
+                return [4 /*yield*/, userQueries_1.default.getUserById(userLogin.user_id)];
             case 3:
                 userLogInData = _b.sent();
-                console.log("youser logingdata", userLogin, Object.keys(userLogin).length);
-                if (Object.keys(userLogin).length < 5) {
+                console.log(userLogInData, "youser logingdata", userLogin, Object.keys(userLogin.token).length);
+                if (Object.keys(userLogin.token).length < 5) {
+                    console.log("token length was short");
                     return [2 /*return*/, response.status(401).json({
                             message: "Authentication failed"
                         })];
                 }
-                returnedData = { token: userLogin, userData: userLogInData };
+                returnedData = { token: userLogin.token, userData: userLogInData };
                 return [2 /*return*/, response.status(201).json(returnedData)];
             case 4:
                 error_6 = _b.sent();
-                console.log(error_6);
+                console.log("there were errors logging the user in", error_6);
                 return [2 /*return*/, response.status(403).json({
                         message: "Authentication failed",
                         error: error_6
