@@ -19,7 +19,11 @@ class ManagerSignUpForm extends Component {
       obj: [],
       userEmails: [],
       file: "",
-      isAuthenticated: ""
+      isAuthenticated: "",
+      userAddedEmails: [],
+      direct_reports: [],
+      errors: [],
+      disabled: ""
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSelectedFile = this.handleSelectedFile.bind(this);
@@ -39,26 +43,45 @@ class ManagerSignUpForm extends Component {
   handleSubmit = async e => {
     e.preventDefault();
     // console.log("files", this.state.file);
+    // this.setState({userAddedEmails:})
 
+    // if (!userData.name) {
+    //   this.setState({ disabled: "disabled" });
+    // }
     var userData = {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
       file: this.state.file,
-      manager: this.state.manager
+      manager: this.state.manager,
+      direct_reports: this.state.direct_reports
     };
 
     var elems12 = document.querySelectorAll(".chips");
     var chipData = elems12[0].M_Chips.chipsData;
 
     let result = chipData.map(chip => chip.tag);
+
+    console.log("chip data from manager,", result);
+
     // var instance = M.Chips.init(elems12);
-    for (var email of result) {
-      var myuser = this.state.user.find(x => x.email === email);
-      // console.log(myuser, "found the user", email);
-      // this.setState({ [e.target.name]: e.target.value });
-      this.state.userEmails.push(myuser);
-    }
+    // for (var email of result) {
+    //   // console.log("email", email);
+    //   var myuser = this.state.user.find(x => x.email === email);
+    //   console.log(
+    //     "000000xxxxxxx",
+    //     myuser,
+    //     "found the user",
+    //     email,
+    //     "result",
+    //     result,
+    //     "the user",
+    //     this.state.user
+    //   );
+    //   // this.setState({ [e.target.name]: e.target.value });
+    //   this.state.userEmails.push(myuser);
+    //   console.log("usermeails", myuser, this.state.userEmails);
+    // }
 
     try {
       var formInfo = new FormData();
@@ -67,14 +90,19 @@ class ManagerSignUpForm extends Component {
       formInfo.append("password", userData.password);
       formInfo.append("file", userData.file);
       formInfo.append("manager", userData.manager);
+      formInfo.append(
+        "direct_reports",
+        JSON.stringify(userData.direct_reports)
+      );
 
+      console.log("formInfoooo00", userData.direct_reports);
       const loginUser = await axios({
         method: "post",
         url: "http://localhost:3000/user/signup",
         data: formInfo,
         config: { headers: { "Content-Type": "multipart/form-data" } }
       });
-      console.log("login ", loginUser);
+      // console.log("login ", loginUser);
       if (loginUser.status === 201 && loginUser.data.user.token.length > 10) {
         localStorage.setItem(
           "token",
@@ -107,42 +135,61 @@ class ManagerSignUpForm extends Component {
   };
 
   componentDidMount = async () => {
+    var context = this;
+    var addedEmails = [];
     try {
       const userList = await axios.get("http://localhost:3000/user/all");
 
       this.setState({
         user: userList.data
       });
-
-      // var result = this.state.user.map(user => user.name);
-
-      // console.log("user list", this.state.user);
-      // var myuser = this.state.user.find(x => x.user_id === 10);
-      // console.log("my user", myuser);
     } catch (error) {
-      console.log("error is here", error);
+      console.log("error is here trying to get my users", error);
     }
 
     var users = this.state.user.map(user => user.email);
     this.setState({ users });
+    //getting the users emails
     Object.keys(users)
       .filter(users.hasOwnProperty.bind(users))
       .reduce((obj, key) => {
+        //fliping the array key and values
         obj[users[key]] = key;
         this.setState({ obj: obj });
         return obj;
       }, {});
 
-    var options00 = {
+    var emailIsValid = email => {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    var chipOptions = {
       autocompleteOptions: {
         data: { ...this.state.obj }
+      },
+      onChipAdd: function(data) {
+        for (let chip of data[0].M_Chips.chipsData) {
+          if (!emailIsValid(chip.tag)) {
+            M.toast({
+              html: "Invalid Input, Only valid email address are allowed",
+              displayLength: 1000,
+              classes: "rounded"
+            });
+          } else if (emailIsValid(chip.tag)) {
+            if (!context.state.direct_reports.includes(chip.tag)) {
+              context.state.direct_reports.push(chip.tag);
+            }
+          }
+        }
       },
       placeholder: "Add a direct report",
       secondaryPlaceholder: "add additional direct report"
     };
+    // console.log("this istate ", context.);
 
     var elems1 = document.querySelectorAll(".chips");
-    M.Chips.init(elems1, options00);
+    M.Chips.init(elems1, chipOptions);
+    // console.log("this istatellllll ", this.state);
   };
   render() {
     return (
@@ -208,10 +255,10 @@ class ManagerSignUpForm extends Component {
               </div>
             </div>
 
-            <div className="chips chips-autocomplete" />
+            <div className="chips  validate chips-autocomplete" />
 
             <button
-              className="btn waves-effect waves-light"
+              className={`btn waves-effect waves-light ${this.state.disabled}`}
               type="submit"
               name="action"
             >

@@ -108,12 +108,39 @@ router.put("/", jwtMW, async (request: UserDataRequest, response: Response) => {
 });
 
 router.post(
-  "/signup",
+  "/signup/:managerID?",
   upload.single("file"),
   async (request: Request, response: Response) => {
     // console.log("redbod", request.body);
+    // var direct_reports;
+    let managerIDNUMBER;
+    const { name, email, password, manager, direct_reports } = request.body;
+    // if (manager) {
+    //   var { direct_reports } = request.body;
+    console.log(
+      "request managerID: ",
+      request.managerID,
+      "directi reports",
+      direct_reports,
+      request.headers.referer
+    );
 
-    const { name, email, password, manager } = request.body;
+    if (manager === "false") {
+      console.log("not a amnager");
+      var findnumber = "([^/]+$)";
+      var result = request.headers.referer.match(findnumber);
+      console.log("foind the number yeaaa", result[0], typeof result[0]);
+      managerIDNUMBER = result[0];
+    }
+
+    // }
+
+    if (!managerIDNUMBER && manager == "false") {
+      console.log("manageriD params", request.params);
+      return response
+        .status(403)
+        .json({ message: "Ask your manager for an invite" });
+    }
 
     // if (!helpers.checkValues(name, email, password)) {
     if (!name || !email || !password) {
@@ -149,27 +176,57 @@ router.post(
     }
 
     try {
-      console.log("Im getting ready to add a user");
+      console.log("Im getting ready to add a user", manager);
       // const photo = UPLOAD_PATH + email + "/" + request.file.originalname;
       const user = await dbHelper.createUser(
         name,
         email,
         password,
-        manager,
-        request.file.filename
+        request.file.filename,
+        manager
       );
-      console.log(user, "user was added");
+      console.log(
+        user,
+        "user was added",
+        typeof manager,
+        direct_reports,
+        typeof direct_reports
+      );
 
       //create a function for this and pass in the number of diurec reports so it can iterate thorugh the number o fusers and add it to the db
-      if (manager) {
-        helpers.sendEmail();
-        helpers.createDirectReports(user.userdata[0].user_id, 93);
+      if (manager !== "false") {
+        console.log(
+          "are you in here manager",
+          manager,
+          direct_reports,
+          typeof direct_reports,
+          JSON.parse(direct_reports),
+          typeof JSON.parse(direct_reports)
+        );
+
+        // const { direct_reports } = request.body;
+        console.log("your direct reports are here");
+        var dr = JSON.parse(direct_reports);
+        for (let index = 0; index < dr.length; index++) {
+          let email = dr[index];
+          helpers.sendEmail(email, user.userdata[0].user_id);
+          console.log("sending email 1", email);
+        }
+        // helpers.sendEmail(direct_reports);
+      } else {
+        console.log("log the manager ID number", managerIDNUMBER, user);
+        if (managerIDNUMBER) {
+          helpers.createDirectReports(
+            managerIDNUMBER,
+            user.userdata[0].user_id
+          );
+        }
       }
 
       return response.status(201).send({ user });
     } catch (error) {
       console.log("server Error: ", error);
-      return response.status(401).json({ err: error });
+      return response.status(401).json({ err: error, message: "you failed" });
     }
   }
 );
@@ -210,7 +267,7 @@ router.post("/login", async (request: UserDataRequest, response: Response) => {
   if (!email || !password) {
     return response
       .status(401)
-      .json("please json over username, email and password");
+      .json({ message: "please json over username, email and password" });
   }
 
   if (!isValidEmail(email)) {

@@ -171,12 +171,29 @@ router.put("/", jwtMW, function (request, response) { return __awaiter(_this, vo
         }
     });
 }); });
-router.post("/signup", upload.single("file"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
-    var _a, name, email, password, manager, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, error_4;
+router.post("/signup/:managerID?", upload.single("file"), function (request, response) { return __awaiter(_this, void 0, void 0, function () {
+    var managerIDNUMBER, _a, name, email, password, manager, direct_reports, findnumber, result, oneUserData, dbData, dbEmail, imagePath, targetPath, originalImageName, imageUploaded, user, dr, index, email_1, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password, manager = _a.manager;
+                _a = request.body, name = _a.name, email = _a.email, password = _a.password, manager = _a.manager, direct_reports = _a.direct_reports;
+                // if (manager) {
+                //   var { direct_reports } = request.body;
+                console.log("request managerID: ", request.managerID, "directi reports", direct_reports, request.headers.referer);
+                if (manager === "false") {
+                    console.log("not a amnager");
+                    findnumber = "([^/]+$)";
+                    result = request.headers.referer.match(findnumber);
+                    console.log("foind the number yeaaa", result[0], typeof result[0]);
+                    managerIDNUMBER = result[0];
+                }
+                // }
+                if (!managerIDNUMBER && manager == "false") {
+                    console.log("manageriD params", request.params);
+                    return [2 /*return*/, response
+                            .status(403)
+                            .json({ message: "Ask your manager for an invite" })];
+                }
                 // if (!helpers.checkValues(name, email, password)) {
                 if (!name || !email || !password) {
                     return [2 /*return*/, response
@@ -207,21 +224,35 @@ router.post("/signup", upload.single("file"), function (request, response) { ret
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 4, , 5]);
-                console.log("Im getting ready to add a user");
-                return [4 /*yield*/, userQueries_1.default.createUser(name, email, password, manager, request.file.filename)];
+                console.log("Im getting ready to add a user", manager);
+                return [4 /*yield*/, userQueries_1.default.createUser(name, email, password, request.file.filename, manager)];
             case 3:
                 user = _b.sent();
-                console.log(user, "user was added");
+                console.log(user, "user was added", typeof manager, direct_reports, typeof direct_reports);
                 //create a function for this and pass in the number of diurec reports so it can iterate thorugh the number o fusers and add it to the db
-                if (manager) {
-                    helpers.sendEmail();
-                    helpers.createDirectReports(user.userdata[0].user_id, 93);
+                if (manager !== "false") {
+                    console.log("are you in here manager", manager, direct_reports, typeof direct_reports, JSON.parse(direct_reports), typeof JSON.parse(direct_reports));
+                    // const { direct_reports } = request.body;
+                    console.log("your direct reports are here");
+                    dr = JSON.parse(direct_reports);
+                    for (index = 0; index < dr.length; index++) {
+                        email_1 = dr[index];
+                        helpers.sendEmail(email_1, user.userdata[0].user_id);
+                        console.log("sending email 1", email_1);
+                    }
+                    // helpers.sendEmail(direct_reports);
+                }
+                else {
+                    console.log("log the manager ID number", managerIDNUMBER, user);
+                    if (managerIDNUMBER) {
+                        helpers.createDirectReports(managerIDNUMBER, user.userdata[0].user_id);
+                    }
                 }
                 return [2 /*return*/, response.status(201).send({ user: user })];
             case 4:
                 error_4 = _b.sent();
                 console.log("server Error: ", error_4);
-                return [2 /*return*/, response.status(401).json({ err: error_4 })];
+                return [2 /*return*/, response.status(401).json({ err: error_4, message: "you failed" })];
             case 5: return [2 /*return*/];
         }
     });
@@ -271,7 +302,7 @@ router.post("/login", function (request, response) { return __awaiter(_this, voi
                 if (!email || !password) {
                     return [2 /*return*/, response
                             .status(401)
-                            .json("please json over username, email and password")];
+                            .json({ message: "please json over username, email and password" })];
                 }
                 if (!isValidEmail(email)) {
                     return [2 /*return*/, response.status(401).json({ message: "email is not valid" })];

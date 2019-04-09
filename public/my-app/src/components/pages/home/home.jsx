@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import ActionSelector from "../../common/actionSelector";
 import Modal from "../../common/modal";
-import EventCalendar from "../../common/calendar";
+// import EventCalendar from "../../common/calendar";
 import "materialize-css/dist/css/materialize.min.css";
 import UserContainer from "../managerView/userContainer.jsx";
 
@@ -17,11 +17,17 @@ class Home extends Component {
     console.log("this is being passed from login", this.props.location);
 
     var token = localStorage.getItem("token");
-    var user = localStorage.getItem("user");
+    console.log(
+      "state is here for manager",
+      this.state.manager,
+      this.props.location.state
+    );
+    // var user = localStorage.getItem("user");
     // console.log("let me see the manager",
-    var parseData = JSON.parse(user).manager;
-
-    this.setState({ manager: parseData });
+    // var parseData = JSON.parse(user).manager;
+    if (this.props.location.state !== undefined) {
+      this.setState({ manager: this.props.location.state.manager });
+    }
 
     if (!token) {
       console.log("there was no token");

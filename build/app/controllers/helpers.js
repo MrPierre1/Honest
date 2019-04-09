@@ -46,18 +46,20 @@ var createDirectReports = function (manager_id, direct_reports) {
             direct_reports: direct_reports
         }
     }, function (err, httpResponse, body) {
-        console.log("error  from helper for manager", err);
+        if (err) {
+            console.log("error  from helper for manager", err);
+        }
     });
 };
-var sendEmail = function () { return __awaiter(_this, void 0, void 0, function () {
+var sendEmail = function (email, managerID) { return __awaiter(_this, void 0, void 0, function () {
     var resultFromSentEmail;
     return __generator(this, function (_a) {
         try {
             resultFromSentEmail = sendmail({
                 from: "nneal@friendshipchristian.net",
-                to: "jpieree1fchd@gmail.com",
+                to: email,
                 subject: "test sendmail " + Date.now(),
-                html: "\n      <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !important;\" width=\"100%\">\n        <tr>\n          <td align=\"center\" style=\"font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;\" valign=\"top\">\n            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;\">\n              <tr>\n                <td style=\"font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;\" valign=\"top\" bgcolor=\"#3498db\" align=\"center\"> \n                <a href=\"http://localhost:3001/signup\" class=\"btn btn-primary\">Click Here To Create An Account</a>\n                 </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n      "
+                html: "\n      <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !important;\" width=\"100%\">\n        <tr>\n          <td align=\"center\" style=\"font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;\" valign=\"top\">\n            <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;\">\n              <tr>\n                <td style=\"font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;\" valign=\"top\" bgcolor=\"#3498db\" align=\"center\"> \n                <a href=\"http://localhost:3001/signup/" + managerID + "\" class=\"btn btn-primary\">Click Here To Create An Account</a>\n                 </td>\n              </tr>\n            </table>\n          </td>\n        </tr>\n      </table>\n      "
             }
             // ,
             // function(err, reply) {
@@ -67,6 +69,13 @@ var sendEmail = function () { return __awaiter(_this, void 0, void 0, function (
             //   // console.dir(reply);
             // }
             );
+            // console.log(
+            //   "direct_reports have arrived",
+            //   direct_reports,
+            //   typeof direct_reports,
+            //   typeof resultFromSentEmail,
+            //   resultFromSentEmail
+            // );
             // const dbData = Object.assign({}, oneUserData[0]);
             return [2 /*return*/, resultFromSentEmail];
         }

@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 // import { Link } from "react-router-dom";
-import Person from 'person.jsx'
+import PeopleContainer from "./peopleContainer";
+import Person from "./person.jsx";
+import UserDetails from "./userDetails";
 
 import "materialize-css/dist/css/materialize.min.css";
 import M from "materialize-css/dist/js/materialize.min.js";
-
 
 class UserContainer extends Component {
   constructor(props) {
@@ -49,34 +50,15 @@ class UserContainer extends Component {
     return (
       <div className="usercontainer">
         <h1>USER CONTAINER</h1>
-        <div>
-          <table className="centered highlighted">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <hr style={{width: '1px', height: '10px', display: 'inline', marginLeft: '2px', marginRight:' 2px'}}/>
-                <th>Item Name</th>
-                <th>Item Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-            <Person></Person>
-                <td>Eclair</td>
-                <td>$0.87</td>
-              </tr>
-              <tr>
-                <td>Alan</td>
-                <td>Jellybean</td>
-                <td>$3.76</td>
-              </tr>
-              <tr>
-                <td>Jonathan</td>
-                <td>Lollipop</td>
-                <td>$7.00</td>
-              </tr>
-            </tbody>
-          </table>
+
+        <div className="row">
+          <div className="col s3">
+            <PeopleContainer />
+          </div>
+          <div className="col s9 blue">
+            6-columns (one-half)
+            <UserDetails />
+          </div>
         </div>
       </div>
     );
