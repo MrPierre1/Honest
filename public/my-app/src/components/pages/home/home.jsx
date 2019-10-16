@@ -3,6 +3,8 @@
 import React, { Component } from "react";
 import ActionSelector from "../../common/actionSelector";
 import Modal from "../../common/modal";
+import axios from "axios";
+
 // import EventCalendar from "../../common/calendar";
 import "materialize-css/dist/css/materialize.min.css";
 import UserContainer from "../managerView/userContainer.jsx";
@@ -13,7 +15,7 @@ class Home extends Component {
     this.state = { isAuthenticated: false, manager: false };
   }
 
-  componentWillMount() {
+  componentDidMount = async () => {
     console.log("this is being passed from login", this.props.location);
 
     var token = localStorage.getItem("token");
@@ -38,6 +40,18 @@ class Home extends Component {
       //   manager: this.props.location.state.manager
       // });
     }
+
+    try {
+      const directReports = await axios.get("http://localhost:3000/user/all");
+
+      this.setState({
+        user: directReports.data
+      });
+    } catch (error) {
+      console.log("error is here trying to get my users", error);
+    }
+
+
   }
 
   render() {
