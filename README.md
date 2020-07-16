@@ -14,7 +14,7 @@ It provides an excellent environment for working with Typescript and many other 
 
 npm run tsc -- --watch
 
-nodemon build/app/serversjs
+nodemon app/servers.js
 
 ```javascript
 {

@@ -4,15 +4,15 @@ const salt = bcrypt.genSaltSync(10);
 // import { UserData } from '../user.controller';
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
-import { UserData } from "./../interfaces";
+// var  { UserData } from "./../interfaces";
 
-const results = (queryResult: any) => {
+const results = (queryResult) => {
   return queryResult.rows.length < 1
     ? Error("Your query did not produce any valid results")
     : queryResult.rows[0];
 };
 
-const getUserById = async (user_id: number): Promise<UserData> => {
+const getUserById = async (user_id) => {
   try {
     const res = await pool.query(
       `SELECT user_id, email, name, manager FROM users WHERE user_id = ${user_id}`
@@ -25,6 +25,7 @@ const getUserById = async (user_id: number): Promise<UserData> => {
 };
 
 const getAllUsers = async () => {
+  console.log('trying to get users')
   try {
     const getAll = await pool.query(`SELECT * FROM users LIMIT 5`);
     return getAll.rows.length < 1 ? null : getAll.rows;
@@ -33,7 +34,7 @@ const getAllUsers = async () => {
   }
 };
 
-const getUserByEmail = async (email: string): Promise<UserData | null> => {
+const getUserByEmail = async (email) => {
   try {
     const res = await pool.query(
       `SELECT * FROM users WHERE email like '%${email}'`
@@ -45,11 +46,11 @@ const getUserByEmail = async (email: string): Promise<UserData | null> => {
 };
 
 const createUser = async (
-  name: string,
-  email: string,
-  password: string,
-  photo: string,
-  manager: boolean
+  name,
+  email,
+  password,
+  photo,
+  manager
 ) => {
   try {
     const hashPass = await bcrypt.hash(password, salt);
@@ -71,7 +72,7 @@ const createUser = async (
   }
 };
 
-const loginUser = async (email: string, password: string) => {
+const loginUser = async (email, password) => {
   try {
     const userInfo = await getUserByEmail(email);
     // console.log("I know the user ID: ", userInfo);
@@ -90,7 +91,7 @@ const loginUser = async (email: string, password: string) => {
   }
 };
 
-const createReports = async (manager_id: number, directReports: number[]) => {
+const createReports = async (manager_id, directReports) => {
   try {
     await pool.query(
       "INSERT INTO manage_direct_reports (manager_id, directReports) VALUES ($1, $2) returning manager_id",
@@ -102,10 +103,10 @@ const createReports = async (manager_id: number, directReports: number[]) => {
 };
 
 const updateUser = async (
-  user_id: string,
-  name: string,
-  email: string,
-  photo: string
+  user_id,
+  name,
+  email,
+  photo
 ) => {
   try {
     const res = await pool.query(
@@ -118,12 +119,12 @@ const updateUser = async (
   }
 };
 
-const passwordUpdate = async (user_id: number, newPassword1: string) => {
+const passwordUpdate = async (user_id, newPassword1) => {
   const passReset = await bcrypt.hash(newPassword1, salt);
   return passReset;
 };
 
-const deleteUserById = async (user_id: number) => {
+const deleteUserById = async (user_id) => {
   try {
     const res = await pool.query(
       `DELETE FROM users WHERE user_id = ${user_id}`
@@ -134,7 +135,7 @@ const deleteUserById = async (user_id: number) => {
   }
 };
 
-const deleteUserByEmail = async (email: string) => {
+const deleteUserByEmail = async (email) => {
   try {
     const res = await pool.query(
       `DELETE FROM users WHERE email like '%${email}'`
@@ -147,7 +148,7 @@ const deleteUserByEmail = async (email: string) => {
   }
 };
 
-export default {
+module.exports = {
   getUserById,
   getAllUsers,
   getUserByEmail,

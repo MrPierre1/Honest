@@ -1,10 +1,11 @@
-import { Router, Request, Response } from "express";
+var express = require('express')
+var router = express.Router()
 const multer = require("multer");
-import dbHelper from "./../services/userQueries";
+var dbHelper = require("./../services/userQueries.js");
 const fs = require("fs");
 const requestCall = require("request");
 const helpers = require("./helpers");
-const router: Router = Router();
+// const router = Router();
 const UPLOAD_PATH = "uploads/";
 const upload = multer({ dest: `${UPLOAD_PATH}` });
 const bcrypt = require("bcrypt");
@@ -13,56 +14,68 @@ const exjwt = require("express-jwt");
 var nodeMailer = require("nodemailer");
 const sendmail = require("sendmail")();
 const secret = process.env.SECRET || "thesecretkey";
-import { UserDataRequest, UserParamsRequest, UserData } from "./interfaces";
+// var { UserDataRequest, UserParamsRequest, UserData } from "./interfaces";
 
 const jwtMW = exjwt({
   secret
 });
 
-// var sendEmail = () => {
-//   sendmail(
-//     {
-//       from: "nneal@friendshipchristian.net",
-//       to: "jpieree1fchd@gmail.com",
-//       subject: `test sendmail ${Date.now()}`,
-//       html: `
-//       <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !important;" width="100%">
-//         <tr>
-//           <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;" valign="top">
-//             <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
-//               <tr>
-//                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;" valign="top" bgcolor="#3498db" align="center">
-//                 <a href="http://localhost:3001/signup" class="btn btn-primary">Click Here To Create An Account</a>
-//                  </td>
-//               </tr>
-//             </table>
-//           </td>
-//         </tr>
-//       </table>
-//       `
-//     },
-//     function(err, reply) {
-//       if (err) {
-//         console.log("error from sending email", err);
-//       }
+var sendEmail = () => {
+  sendmail(
+    {
+      from: "nneal@friendshipchristian.net",
+      to: "jpieree1fchd@gmail.com",
+      subject: `test sendmail ${Date.now()}`,
+      html: `
+      <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; min-width: 100% !varant;" width="100%">
+        <tr>
+          <td align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;" valign="top">
+            <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+              <tr>
+                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;" valign="top" bgcolor="#3498db" align="center">
+                <a href="http://localhost:3001/signup" class="btn btn-primary">Click Here To Create An Account</a>
+                 </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      `
+    },
+    function (err, reply) {
+      if (err) {
+        console.log("error from sending email", err);
+      }
 
-//       // console.dir(reply);
-//     }
-//   );
-// };
+      // console.dir(reply);
+    }
+  );
+};
 
-router.get("/", async (req: Request, res: Response) => {
+// router.use(function timeLog(req, res, next) {
+//   console.log('Time: ', Date.now())
+//   next()
+// })
+
+
+
+// exports.getParent = function (req, res) {
+router.get("/", async (req, res) => {
   res.status(201).send("re now in the user controller!");
 });
-router.get("/all", async (req: Request, res: Response) => {
-  const allUsers: UserData = await dbHelper.getAllUsers();
+// };
+
+
+
+router.get("/all", async (req, res) => {
+  const allUsers = await dbHelper.getAllUsers();
   res.status(201).json(allUsers);
 });
 
 router.get(
   "/email/:email",
 
-  async (request: Request, response: Response) => {
+  async (request, response) => {
     try {
       const { email } = request.params;
       const oneUserData = await dbHelper.getUserByEmail(email);
@@ -80,10 +93,10 @@ router.get(
 router.get(
   "/:id",
 
-  async (request: UserParamsRequest, response: Response) => {
+  async (request, response) => {
     try {
       const { id } = request.params;
-      const oneUserData: UserData = await dbHelper.getUserById(id);
+      const oneUserData = await dbHelper.getUserById(id);
 
       console.log("oneuser data", response);
       // const dbData = Object.assign({}, oneUserData[0]);
@@ -94,7 +107,7 @@ router.get(
   }
 );
 
-router.put("/", jwtMW, async (request: UserDataRequest, response: Response) => {
+router.put("/", jwtMW, async (requestRequest, response) => {
   try {
     const { name, email, photo } = request.body;
     const userLogInData = await dbHelper.getUserByEmail(request.user.email);
@@ -110,7 +123,7 @@ router.put("/", jwtMW, async (request: UserDataRequest, response: Response) => {
 router.post(
   "/signup/:managerID?",
   upload.single("file"),
-  async (request: Request, response: Response) => {
+  async (request, response) => {
     // console.log("redbod", request.body);
     // var direct_reports;
     let managerIDNUMBER;
@@ -231,7 +244,7 @@ router.post(
   }
 );
 
-router.post("/create_reports", async (request: Request, response: Response) => {
+router.post("/create_reports", async (request, response) => {
   const { manager_id, direct_reports } = request.body;
 
   try {
@@ -256,10 +269,10 @@ router.post("/create_reports", async (request: Request, response: Response) => {
   }
 });
 
-router.post("/login", async (request: UserDataRequest, response: Response) => {
+router.post("/login", async (requestRequest, response) => {
   const { email, password } = request.body;
 
-  const isValidEmail = (email: string) => {
+  const isValidEmail = (email) => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
@@ -308,7 +321,7 @@ router.post("/login", async (request: UserDataRequest, response: Response) => {
 router.put(
   "/passwordUpdate",
   jwtMW,
-  async (request: UserDataRequest, response: Response) => {
+  async (requestRequest, response) => {
     const { token, id, oldPassword, newPassword1, newPassword2 } = request.body;
     if (!token) {
       response.status(401).json({ message: "please json over a token" });
@@ -337,7 +350,7 @@ router.put(
   }
 );
 
-router.delete("/", jwtMW, async (request: Request, response: Response) => {
+router.delete("/", jwtMW, async (request, response) => {
   console.log(request.user);
   try {
     const userLogInData = await dbHelper.deleteUserByEmail(request.user.email);
@@ -350,4 +363,6 @@ router.delete("/", jwtMW, async (request: Request, response: Response) => {
   }
 });
 
-export const userController: Router = router;
+module.exports = router;
+
+// module.exports = router

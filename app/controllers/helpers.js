@@ -14,7 +14,7 @@ const createDirectReports = (manager_id, direct_reports) => {
         direct_reports
       }
     },
-    function(err, httpResponse, body) {
+    function (err, httpResponse, body) {
       if (err) {
         console.log("error  from helper for manager", err);
       }
@@ -71,18 +71,18 @@ const sendEmail = async (email, managerID) => {
   }
 };
 
-const imageUpload = function(
-  imagePath: string,
-  targetPath: string,
-  originalFileName: string,
-  email: string
+const imageUpload = function (
+  imagePath,
+  targetPath,
+  originalFileName,
+  email
 ) {
   console.log(imagePath, targetPath, originalFileName);
   fs.mkdirSync(targetPath + email + "/");
   var dest = fs.createWriteStream(targetPath + email + "/" + originalFileName);
 };
 
-const checkValues = (value1: any, value2: any, value3: any) => {
+const checkValues = (value1, value2, value3) => {
   if (!value1 || !value2 || !value3) {
     return false;
   }
