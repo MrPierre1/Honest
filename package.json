@@ -9,7 +9,7 @@
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "express-validator": "^5.3.1",
-    "jsonwebtoken": "^8.4.0",
+    "jsonwebtoken": "^9.0.0",
     "jwt-simple": "^0.5.5",
     "material-table": "^1.18.0",
     "multer": "^1.4.1",
